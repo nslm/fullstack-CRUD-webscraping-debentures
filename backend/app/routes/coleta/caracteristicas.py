@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from ...scrapers import scraper_caracteristicas
+from app.scrapers import scraper_caracteristicas
 
 router = APIRouter()
 

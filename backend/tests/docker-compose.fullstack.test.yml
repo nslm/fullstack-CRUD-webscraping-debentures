@@ -1,40 +1,40 @@
 version: "3.9"
 
 services:
-  backend:
+  backend_test:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ../
     container_name: backend
     ports:
-      - "8000:8000"
+      - "8001:8000"
+    command: ["pytest", "-v", "tests/"]
     volumes:
-      - ./backend:/app
+      - ../app:/app
+      - ./tests:/app/tests
     depends_on:
-      - redis
-      - db
+      - redis_test
+      - db_test
     env_file:
-      - .env.dev
+      - backend/tests/.env.test
 
-  redis:
+  redis_test:
     image: redis:alpine
-    container_name: redis
+    container_name: redis_test
     ports:
       - "6379:6379"
 
-  db:
+  db_test:
     image: postgres:16
-    container_name: postgres
+    container_name: postgres_test
     restart: always
     env_file:
-      - .env.dev
+      - backend/tests/.env.test
     ports:
-      - "5432:5432"
+      - "5433:5433"
     volumes:
       - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - pgdata:/var/lib/postgresql/data
 
-  frontend:
+  frontend_test:
     build:
       context: ./frontend
     ports:
@@ -44,7 +44,5 @@ services:
     stdin_open: true
     tty: true
     depends_on:
-      - backend
+      - backend_test
 
-volumes:
-  pgdata:

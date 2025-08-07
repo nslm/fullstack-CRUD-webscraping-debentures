@@ -4,14 +4,35 @@ services:
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/app
     depends_on:
       - redis
+      - db
+    env_file:
+      - .env.dev
 
   redis:
     image: redis:alpine
+    container_name: redis
     ports:
       - "6379:6379"
+
+  db:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    env_file:
+      - .env.dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

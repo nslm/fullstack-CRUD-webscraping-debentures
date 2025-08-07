@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from ...scrapers import scraper_balcao
+from app.scrapers import scraper_balcao
 
 router = APIRouter()
 
