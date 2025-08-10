@@ -35,11 +35,11 @@ async def all_debentures_route(conn: AsyncConnection = Depends(get_db_connection
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/")
+@router.put("/{codigo}")
 async def update_debenture_route(
+    codigo: str,
     request: Request,
-    conn: AsyncConnection = Depends(get_db_connection),
-    codigo: str = Query(...)
+    conn: AsyncConnection = Depends(get_db_connection)
 ):
     data = await request.json()
     try:
@@ -58,11 +58,11 @@ async def update_debenture_route(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/")
+@router.delete("/{codigo}")
 async def delete_debenture_route(
+    codigo: str,
     request: Request,
-    conn: AsyncConnection = Depends(get_db_connection),
-    codigo: str = Query(...)
+    conn: AsyncConnection = Depends(get_db_connection)
 ):
     
     if not codigo:

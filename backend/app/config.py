@@ -19,5 +19,6 @@ def load_config(env: str = "dev"):
         "POSTGRES_DB": os.getenv("POSTGRES_DB"),
         "POSTGRES_USER": os.getenv("POSTGRES_USER"),
         "POSTGRES_PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "FRONTEND_ORIGIN": os.getenv("FRONTEND_ORIGIN"),
     }
 
