@@ -62,7 +62,14 @@ const handleChange = (k: keyof Debenture) => (e: React.ChangeEvent<HTMLInputElem
       <DialogTitle>{initial ? 'Editar Debenture' : 'Adicionar Debenture'}</DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'grid', gap: 2, mt: 1 }}>
-          <TextField label="Código" value={form.codigo} onChange={handleChange('codigo')} required />
+          {!initial && (
+            <TextField
+              label="Código"
+              value={form.codigo}
+              onChange={handleChange('codigo')}
+              required
+            />
+          )}
           <TextField label="Emissor" value={form.emissor} onChange={handleChange('emissor')} required />
           <TextField
             label="Vencimento"

@@ -1,6 +1,7 @@
 from typing import Optional
 from psycopg import AsyncConnection
 from psycopg.rows import dict_row
+from typing import Union, List, Dict
 
 with open("app/querys/debentures.sql") as f:
     queries = f.read().split("-- ")
@@ -12,14 +13,32 @@ delete_query = [q for q in queries if q.startswith("DELETE")][0][6:].strip()
 
 
 # INSERT
-async def insert_debenture(conn: AsyncConnection, codigo:str, emissor:str, vencimento:str, indice:str, taxa:int) -> dict:
+async def insert_debenture(conn: AsyncConnection, data:Dict[str, Union[str, List[str], int, List[int]]]) -> dict:
+    cols = ["codigo", "emissor", "vencimento", "indice", "taxa"]
+    values = [data.get(col) for col in cols]
+    is_bulk = any(isinstance(v, list) for v in values)
     async with conn.cursor(row_factory=dict_row) as cur:
-        await cur.execute(
-            insert_query,
-            (codigo, emissor, vencimento, indice, taxa)
-        )
-        await conn.commit()
-        return await cur.fetchone()
+        # single insert
+        if not is_bulk:
+            await cur.execute(insert_query, values)
+            await conn.commit()
+            return await cur.fetchone()
+        
+        else:
+            # bulk insert
+            lengths = [len(v) if isinstance(v, list) else 1 for v in values]
+            max_len = max(lengths)
+            for i, v in enumerate(values):
+                if not isinstance(v, list):
+                    values[i] = [v] * max_len
+                elif len(v) != max_len:
+                    raise ValueError("Tamanhos das listas devem ser iguais")
+
+            records = list(zip(*values))
+
+            await cur.executemany(insert_query[:-12]+";", records) #removing return *; from the query
+            await conn.commit()
+            return {"inserted": len(records)}
     
 # SELECT
 async def select_all_debenture(conn: AsyncConnection) -> list[dict]:

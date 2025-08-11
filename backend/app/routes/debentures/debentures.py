@@ -15,11 +15,7 @@ async def add_debenture_route(
     try:
         result = await insert_debenture(
             conn,
-            codigo=data["codigo"],
-            emissor=data["emissor"],
-            vencimento=data["vencimento"],
-            indice=data["indice"],
-            taxa=data["taxa"]
+            data
         )
         return {"message": "Debenture adicionada com sucesso", "debenture": result}
     except Exception as e:

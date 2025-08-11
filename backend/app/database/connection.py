@@ -1,8 +1,8 @@
 from psycopg import AsyncConnection
-from app.config import load_config
+from fastapi import Request
 
-async def get_db_connection(env: str = "dev") -> AsyncConnection:
-    config = load_config(env)
+async def get_db_connection(request: Request) -> AsyncConnection:
+    config = request.app.state.config
     conn: AsyncConnection = await AsyncConnection.connect(
         host=config["POSTGRES_HOST"],
         port=int(config["POSTGRES_PORT"]),
