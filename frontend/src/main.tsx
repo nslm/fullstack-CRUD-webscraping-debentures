@@ -5,6 +5,7 @@ import App from './App'
 import './index.css'
 import { CssBaseline } from '@mui/material'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
+import 'react-day-picker/dist/style.css';
 
 const theme = createTheme({
   palette: {

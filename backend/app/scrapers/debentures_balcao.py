@@ -1,15 +1,14 @@
 import httpx
-import asyncio
 import pandas as pd
 from io import StringIO
 from datetime import datetime
 
 
-async def scraper_balcao():
+async def scraper_balcao(start_date:  str, final_date: str):
     payload = {
         "Name": "Trade",
-        "Date": "2025-08-07",
-        "FinalDate": "2025-08-07",
+        "Date": start_date,
+        "FinalDate": final_date,
         "ClientId": "",
         "Filters": {}
         }
@@ -27,7 +26,7 @@ async def scraper_balcao():
             resp.encoding = 'utf-8'
             excel_io = StringIO(resp.text)
 
-            df = pd.read_csv(excel_io, sep=";", header=7, encoding='utf-8')
+            df = pd.read_csv(excel_io, sep=";", header=7, encoding='utf-8', low_memory=False)
             df.columns = df.columns.str.strip()
             df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
@@ -44,10 +43,11 @@ async def scraper_balcao():
             df["volume_financeiro"] = df["volume_financeiro"].apply(lambda x:int(float(str(x).replace(',','.'))*10**2))
             df["taxa"] = df["taxa"].apply(lambda x:int(float(str(x).replace(',','.'))*10**4) if str(x).lower() not in ('nan', '-') else None)
             df['taxa'] = df['taxa'].astype('Int64')
-            print(df)
+            
+            data = df.to_dict(orient='list')
+            return {"status": "ok", "data": data}
     
     except Exception as e:
         print(e)
         return {"status": "erro", "detalhe": str(e)}
     
-asyncio.run(scraper_balcao())

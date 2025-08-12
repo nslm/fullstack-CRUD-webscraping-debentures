@@ -7,7 +7,7 @@ from app.config import load_config, get_redis
 def create_app(env: str = "dev") -> FastAPI:
     r = get_redis(env)
     config = load_config(env)
-    origins = config["FRONTEND_ORIGIN"]
+    origins = [config["FRONTEND_ORIGIN"]]
     
     app = FastAPI()
     app.state.r = r 
@@ -19,6 +19,7 @@ def create_app(env: str = "dev") -> FastAPI:
     app.include_router(coleta_balcao, prefix="/api/coleta/balcao", tags=["Coleta"])
     app.include_router(coleta_caracteristicas, prefix="/api/coleta/caracteristicas", tags=["Coleta"])
     app.include_router(debentures, prefix="/api/debentures", tags=["Debentures"])
+
 
     app.add_middleware(
         CORSMiddleware,

@@ -13,7 +13,7 @@ export default function useDebentures() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`${API_BASE}/api/debentures`)
+      const res = await fetch(`${API_BASE}/api/debentures/`)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setItems(data)
@@ -30,7 +30,7 @@ export default function useDebentures() {
   }, [])
 
   const add = async (d: Debenture) => {
-    const res = await fetch(`${API_BASE}/api/debentures`, {
+    const res = await fetch(`${API_BASE}/api/debentures/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(d)
@@ -45,7 +45,7 @@ export default function useDebentures() {
   }
 
   const update = async (codigo: string, updated: Debenture) => {
-    const res = await fetch(`${API_BASE}/api/debentures/${encodeURIComponent(codigo)}`, {
+    const res = await fetch(`${API_BASE}/api/debentures/${encodeURIComponent(codigo)}/`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updated)
@@ -60,7 +60,7 @@ export default function useDebentures() {
   }
 
   const remove = async (codigo: string) => {
-    const res = await fetch(`${API_BASE}/api/debentures/${encodeURIComponent(codigo)}`, {
+    const res = await fetch(`${API_BASE}/api/debentures/${encodeURIComponent(codigo)}/`, {
       method: 'DELETE'
     })
     if (!res.ok) {

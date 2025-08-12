@@ -19,15 +19,16 @@ export default function App() {
   }
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box>
       <TopBar onMenuClick={handleToggle} />
       <NavDrawer open={open} onNavigate={handleNavigate} drawerWidth={drawerWidth} />
       <Box component="main" sx={{
-        flexGrow: 1,
-        p: 3,
-        transition: 'margin 0.3s',
-        marginLeft: open ? `${drawerWidth}px` : 0
-      }}>
+          flexGrow: 1,
+          p: 2,              
+          transition: 'margin 0.3s',
+          marginLeft: open ? `${drawerWidth}px` : 0,
+          marginRight: 0
+        }}>
         <Toolbar />
         <Routes>
           <Route path="/" element={<AutomationsPage />} />

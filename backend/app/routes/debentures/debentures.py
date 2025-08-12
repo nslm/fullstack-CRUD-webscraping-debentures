@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Query
 from psycopg import AsyncConnection
-from app.database.debentures import insert_debenture, select_all_debenture, update_debenture, delete_debenture
+from app.database.debentures_caracteristicas import insert_debenture_caracteristicas, select_all_debenture_caracteristicas, update_debenture_caracteristicas, delete_debenture_caracteristicas
 from app.database.connection import get_db_connection
 
 router = APIRouter()
@@ -12,8 +12,9 @@ async def add_debenture_route(
     conn: AsyncConnection = Depends(get_db_connection)
 ):
     data = await request.json()
+    data["situacao"] = "Registrado"
     try:
-        result = await insert_debenture(
+        result = await insert_debenture_caracteristicas(
             conn,
             data
         )
@@ -25,7 +26,7 @@ async def add_debenture_route(
 @router.get("/")
 async def all_debentures_route(conn: AsyncConnection = Depends(get_db_connection)):
     try:
-        debentures = await select_all_debenture(conn)
+        debentures = await select_all_debenture_caracteristicas(conn)
         return debentures
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -39,7 +40,7 @@ async def update_debenture_route(
 ):
     data = await request.json()
     try:
-        result = await update_debenture(
+        result = await update_debenture_caracteristicas(
             conn,
             codigo=codigo,
             emissor=data["emissor"],
@@ -64,7 +65,7 @@ async def delete_debenture_route(
     if not codigo:
         raise HTTPException(status_code=400, detail="Código é obrigatório para deletar")
     try:
-        success = await delete_debenture(conn, codigo)
+        success = await delete_debenture_caracteristicas(conn, codigo)
         if not success:
             raise HTTPException(status_code=404, detail="Debenture não encontrada")
         return {"message": "Debenture removida com sucesso"}

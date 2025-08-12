@@ -14,7 +14,7 @@ type Props = {
 
 const DebenturesTable: React.FC<Props> = ({ items, onEdit, onDelete }) => {
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ maxHeight: '60vh', overflowY: 'auto' }}>
       <Table>
         <TableHead>
           <TableRow>
