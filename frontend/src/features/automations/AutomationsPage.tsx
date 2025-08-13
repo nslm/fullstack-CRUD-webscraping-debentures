@@ -13,11 +13,10 @@ import {
   TableCell,
   CircularProgress,
   Paper,
-  TablePagination,
-  TextField
+  TablePagination
 } from "@mui/material";
 import { DayPicker } from 'react-day-picker';
-import { format, parseISO } from 'date-fns';
+import { format, isAfter, parseISO } from 'date-fns';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { v4 as uuidv4 } from 'uuid';
@@ -60,9 +59,12 @@ export default function AutomationsPage() {
   const [rowsPerPage, setRowsPerPage] = useState<Record<string, number>>({ caracteristicas: 5, balcao: 5 });
   const [openDateFilter, setOpenDateFilter] = useState(false);
   const [dateFilter, setDateFilter] = useState({ startDate: "", finalDate: "" });
-  const [markedDates, setMarkedDates] = useState<string[]>([]);  
   const [lastWorkday, setLastWorkday] = useState<string>("");  
+  const [markedDates, setMarkedDates] = useState<string[]>([]);  
+  const [notWorkdayList, setNotWorkdayList] = useState<string[]>([]);
   const [logs, setLogs] = useState<Record<string, LogEntry[]>>({});
+  const [dateFilterLoading, setDateFilterLoading] = useState(true);
+
   const parseDate = (isoDate: string) => parseISO(isoDate);
 
 
@@ -122,7 +124,9 @@ export default function AutomationsPage() {
       }
 
       fetchLogs(id);
+      fetchBalcaoDates();
 
+      
     } catch {
       setStatuses(prev => ({ ...prev, [id]: "Status não disponível" }));
       setLoading(prev => ({ ...prev, [id]: false }));
@@ -155,6 +159,9 @@ export default function AutomationsPage() {
           delete intervalsRef.current[id];
           setLoading(prev => ({ ...prev, [id]: false }));
           fetchLogs(id);
+          if (id === "balcao") {
+            fetchBalcaoDates();
+          }
         }
 
       } catch {
@@ -163,7 +170,7 @@ export default function AutomationsPage() {
     };
 
     fetchStatus();
-    intervalsRef.current[id] = window.setInterval(fetchStatus, 10);
+    intervalsRef.current[id] = window.setInterval(fetchStatus, 500);
   }
 
   async function fetchLogs(id: string) {
@@ -178,35 +185,50 @@ export default function AutomationsPage() {
     }
   }
 
+  async function fetchBalcaoDates() {
+    try {
+      const [lastWorkdayRes, datesRes, notWorkdayRes] = await Promise.all([
+        fetch(`${API_BASE}/api/coleta/balcao/lastworkday/`),
+        fetch(`${API_BASE}/api/coleta/balcao/dates/`),
+        fetch(`${API_BASE}/api/coleta/balcao/notworkdaylist/`),
+      ]);
+
+      if (!lastWorkdayRes.ok || !datesRes.ok || !notWorkdayRes.ok) {
+        throw new Error('Erro ao buscar dados');
+      }
+
+      const lastWorkdayData = await lastWorkdayRes.json();
+      const datesData = await datesRes.json();
+      const notWorkdayData = await notWorkdayRes.json();
+
+      setLastWorkday(lastWorkdayData.last_workday);
+      setMarkedDates(datesData.dates);
+      setNotWorkdayList(notWorkdayData.not_workday_list);
+
+      setDateFilter(prev => ({
+        ...prev,
+        startDate: prev.startDate || lastWorkdayData.last_workday,
+        finalDate: prev.finalDate || lastWorkdayData.last_workday
+      }));
+
+      setDateFilterLoading(false); 
+
+    } catch (error) {
+      console.error("Falha ao buscar datas do balcao:", error);
+      //setDateFilterLoading(false); 
+    }
+  }
+
   useEffect(() => {
-      const fetchDatesAndLastWorkday = async () => {
-        try {
-          const resDates = await fetch(`${API_BASE}/api/coleta/balcao/dates/`);
-          if (!resDates.ok) throw new Error("Erro ao buscar datas");
-          const datesData = await resDates.json();
-          setMarkedDates(datesData.dates); 
 
-          const resLastWorkday = await fetch(`${API_BASE}/api/coleta/balcao/lastworkday/`);
-          if (!resLastWorkday.ok) throw new Error("Erro ao buscar último dia útil");
-          const lastWorkdayData = await resLastWorkday.json();
-          setLastWorkday(lastWorkdayData.last_workday)
-          setDateFilter({
-            startDate: lastWorkdayData.last_workday,
-            finalDate: lastWorkdayData.last_workday
-          });
-
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
-    fetchDatesAndLastWorkday();
+    fetchBalcaoDates();
 
     const fetchAllLogs = () => {
       AUTOMATIONS.forEach(({ id }) => {
         fetchLogs(id);
       });
     };
+
 
     fetchAllLogs();
     return () => {
@@ -228,10 +250,10 @@ export default function AutomationsPage() {
 
   return (
 
-    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', mb: 2 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', mb: 2, px: 12, mt: 8 }}>
         <Typography variant="h4" gutterBottom>Controle de Automações</Typography>
 
-      <Grid container spacing={4}>
+      <Grid container spacing={8}>
         {AUTOMATIONS.map(({ id, label }) => {
           const logsForId: LogEntry[] = logs[id] ?? [];
           const currentPage = page[id] || 0;
@@ -248,10 +270,10 @@ export default function AutomationsPage() {
 
           return (
             <Grid item xs={12} md={6} key={id}>
-              <Paper sx={{ p: 4 }}>
+              <Paper sx={{ p: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", mb: 4}}>
                   <Typography variant="h6">{label}</Typography>
-                  <Button variant="contained" onClick={() => startAutomation(id)} disabled={!!loading[id]}>
+                  <Button variant="contained" onClick={() => startAutomation(id)} disabled={!!loading[id]} sx={{backgroundColor: '#061569ff'}}>
                     {loading[id] ? <CircularProgress size={24} color="inherit" /> : "Start"}
                   </Button>                  
                 </Box>
@@ -261,17 +283,20 @@ export default function AutomationsPage() {
                 </Typography>
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                  <Button variant="outlined" onClick={() => toggleLogs(id)} endIcon={openLogs[id] ? <ExpandLessIcon /> : <ExpandMoreIcon />}>
+                  <Button 
+                    variant="outlined" 
+                    onClick={() => toggleLogs(id)} 
+                    endIcon={openLogs[id] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    >
                     Logs de Execução
                   </Button>
-
                   {id === "balcao" && (
                     <Button
                       variant="outlined"
                       onClick={toggleDateFilter}
                       endIcon={openDateFilter ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                     >
-                      Filtrar por Datas
+                      Selecionar Datas
                     </Button>
                   )}
                 </Box>
@@ -305,69 +330,140 @@ export default function AutomationsPage() {
                       </Table>
                     </Box>
                   <TablePagination
-                    rowsPerPageOptions={[10, 25, 50]}
+                    rowsPerPageOptions={[5, 10, 25]}
                     component="div"
                     count={logsForId.length}
                     rowsPerPage={rowsPerPage[id] || 5}
                     page={currentPage}
                     onPageChange={(e, newPage) => handleChangePage(id, e, newPage)}
                     onRowsPerPageChange={(e) => handleChangeRowsPerPage(id, e)}
-                  />
+                    />
                 </Collapse>
 
                 {id === "balcao" && (
                   <Collapse in={openDateFilter} timeout="auto" unmountOnExit>
-                    <Grid container spacing={2} justifyContent="space-between" sx={{ mb: 2 }}>
-                      
+                    {dateFilterLoading ? (
+                      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+                        <CircularProgress />
+                      </Box>
+                    ) : (
+                      <Grid container spacing={2} justifyContent="space-between" sx={{ px: 1 }}>                      
                           <Grid item>
-                            <Typography>Data Início</Typography>
-                            <DayPicker
-                              mode="single"
-                              selected={parseDate(dateFilter.startDate)}
-                              onSelect={(date) => {
-                                if (date) setDateFilter(prev => ({ ...prev, startDate: format(date, 'yyyy-MM-dd') }));
-                              }}
-                              modifiers={{
-                                marked: markedDates.map(parseDate),
-                                lastWorkday: parseDate(lastWorkday)
-                              }}
-                              modifiersClassNames={{
-                                marked: 'marked-day',
-                                lastWorkday: 'lastworkday-day'
-                              }}
-                              modifiersStyles={{
-                                marked: {
-                                  backgroundColor: "green",
-                                  color: "white",
-                                },
-                              }}
-                            />
+                            <Typography fontWeight="bold">Data Início {dateFilter.startDate}</Typography>
+                              <DayPicker
+                                mode="single"
+                                selected={parseDate(dateFilter.startDate)}
+                                onSelect={(date) => {
+                                  if (date) setDateFilter(prev => ({ ...prev, startDate: format(date, 'yyyy-MM-dd') }));
+                                }}
+                                modifiers={{
+                                  marked: markedDates.map(parseISO),
+                                  startSelected: parseISO(dateFilter.startDate),
+                                  notWorkdayPassed: notWorkdayList.map(parseISO),
+                                  lastWorkday: parseISO(lastWorkday),
+                                  pastWorkdays: (date) => {
+                                    const lw = parseISO(lastWorkday);
+                                    const dISO = format(date, 'yyyy-MM-dd');                                    
+                                    if (isAfter(date, lw)) return false;                                    
+                                    if (markedDates.includes(dISO)) return false;                                  
+                                    if (notWorkdayList.includes(dISO)) return false;                                    
+                                    return true; 
+                                  },
+                                  disabledFromLastWorkdayOnwards: (date) => {
+                                    const lw = parseISO(lastWorkday);
+                                    return isAfter(date, lw);
+                                  }
+                                }}
+                                modifiersClassNames={{
+                                  marked: 'marked-day',
+                                  startSelected: 'start-selected-day',
+                                  notWorkdayPassed: 'notworkday-day',
+                                  lastWorkday: 'lastworkday-day',
+                                  pastWorkdays: 'past-workday-day'
+                                }}
+                                disabled={(date) => {
+                                  const lw = parseISO(lastWorkday);
+                                  return isAfter(date, lw);
+                                }}
+                                modifiersStyles={{
+                                  marked: {
+                                    backgroundColor: '#1e8d22ff',
+                                    color: 'white',
+                                  },
+                                  startSelected: {
+                                    backgroundColor: '#061569ff',
+                                    color: 'white',
+                                  },
+                                  notWorkdayPassed: {
+                                    backgroundColor: '#f4f5f8ff',
+                                    color: 'black',
+                                  },
+                                  pastWorkdays: {
+                                    backgroundColor: '#e7e6e7ff',
+                                    color: 'black',
+                                  }
+                                }}
+                                />
                           </Grid>
                           <Grid item>
-                            <Typography>Data Fim</Typography>
-                            <DayPicker
-                              mode="single"
-                              selected={parseDate(dateFilter.finalDate)}
-                              onSelect={(date) => {
-                                if (date) setDateFilter(prev => ({ ...prev, finalDate: format(date, 'yyyy-MM-dd') }));
-                              }}
-                              modifiers={{
-                                marked: markedDates.map(parseDate),
-                                lastWorkday: parseDate(lastWorkday)
-                              }}
-                              modifiersClassNames={{
-                                marked: 'marked-day',
-                                lastWorkday: 'lastworkday-day'
-                              }}
-                              modifiersStyles={{
-                                marked: {
-                                  backgroundColor: "green",
-                                  color: "white",
-                                },
-                              }}
-                              />
+                            <Typography fontWeight="bold">Data Fim {dateFilter.finalDate}</Typography>
+                              <DayPicker
+                                mode="single"
+                                selected={parseDate(dateFilter.finalDate)}
+                                onSelect={(date) => {
+                                  if (date) setDateFilter(prev => ({ ...prev, finalDate: format(date, 'yyyy-MM-dd') }));
+                                }}
+                                modifiers={{
+                                  marked: markedDates.map(parseISO),
+                                  startSelected: parseISO(dateFilter.finalDate),
+                                  notWorkdayPassed: notWorkdayList.map(parseISO),
+                                  lastWorkday: parseISO(lastWorkday),
+                                  pastWorkdays: (date) => {
+                                    const lw = parseISO(lastWorkday);
+                                    const dISO = format(date, 'yyyy-MM-dd');                                    
+                                    if (isAfter(date, lw)) return false;                                  
+                                    if (markedDates.includes(dISO)) return false;                                    
+                                    if (notWorkdayList.includes(dISO)) return false;                                    
+                                    return true; 
+                                  },
+                                  disabledFromLastWorkdayOnwards: (date) => {
+                                    const lw = parseISO(lastWorkday);
+                                    return isAfter(date, lw);
+                                  }
+                                }}
+                                modifiersClassNames={{
+                                  marked: 'marked-day',
+                                  startSelected: 'start-selected-day',
+                                  notWorkdayPassed: 'notworkday-day',
+                                  lastWorkday: 'lastworkday-day',
+                                  pastWorkdays: 'past-workday-day'
+                                }}
+                                disabled={(date) => {
+                                  const lw = parseISO(lastWorkday);
+                                  return isAfter(date, lw);
+                                }}
+                                modifiersStyles={{
+                                  marked: {
+                                    backgroundColor: '#1e8d22ff',
+                                    color: 'white',
+                                  },
+                                  startSelected: {
+                                    backgroundColor: '#061569ff',
+                                    color: 'white',
+                                  },
+                                  notWorkdayPassed: {
+                                    backgroundColor: '#f4f5f8ff',
+                                    color: 'black',
+                                  },
+                                  pastWorkdays: {
+                                    backgroundColor: '#e7e6e7ff',
+                                    color: 'black',
+                                  }
+                                }}
+                                />
                           </Grid>
                         </Grid>
+                    )}
                   </Collapse>
                 )}
                 </Paper>
@@ -379,16 +475,3 @@ export default function AutomationsPage() {
   );
 }
 
-<style>
-{`
-  .marked-day {
-    background-color: #4caf50 !important;  /* verde */
-    color: white !important;
-  }
-  .lastworkday-day {
-    background-color: white !important;
-    color: black !important;
-    border: 2px solid #2196f3; /* azul para destacar */
-  }
-`}
-</style>

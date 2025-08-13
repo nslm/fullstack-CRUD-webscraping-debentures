@@ -56,7 +56,7 @@ const DebenturesPage: React.FC = () => {
     setPage(0)
   }
 
-  // client-side filter (case-insensitive)
+
   const filtered = items.filter(i => {
     const q = filter.trim().toLowerCase()
     if (!q) return true
@@ -67,14 +67,46 @@ const DebenturesPage: React.FC = () => {
     )
   })
 
-  const paginated = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+
+  type Order = 'asc' | 'desc'
+   
+  const [order, setOrder] = React.useState<Order>('asc');
+  const [orderBy, setOrderBy] = React.useState<keyof Debenture>('codigo');
+
+  const handleRequestSort = (property: keyof Debenture) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const sorted = React.useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      const valA = a[orderBy];
+      const valB = b[orderBy];
+
+      if (valA == null) return 1;
+      if (valB == null) return -1;
+
+      if (typeof valA === 'number' && typeof valB === 'number') {
+        return order === 'asc' ? valA - valB : valB - valA;
+      }
+
+      return order === 'asc'
+        ? String(valA).localeCompare(String(valB))
+        : String(valB).localeCompare(String(valA));
+    });
+  }, [filtered, order, orderBy]);
+
+  const paginated = React.useMemo(() => {
+    return sorted.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  }, [sorted, page, rowsPerPage]);
 
   return (
-    <div>
+    <Box sx={{ px: 6, mr:6, ml:6 }}>
       <Toolbar />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h4">Debentures</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick}>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} sx={{backgroundColor: '#061569ff'}}>
           Adicionar
         </Button>
       </Box>
@@ -85,14 +117,21 @@ const DebenturesPage: React.FC = () => {
           value={filter}
           onChange={(e) => { setFilter(e.target.value); setPage(0) }}
           size="small"
-        />
+          />
         <Button onClick={() => fetchAll()} disabled={loading}>Atualizar</Button>
         {loading && <CircularProgress size={20} />}
       </Box>
 
       {error && <Box sx={{ color: 'error.main', mb: 2 }}>{error}</Box>}
 
-      <DebenturesTable items={paginated} onEdit={handleEdit} onDelete={handleDelete} />
+      <DebenturesTable
+        items={paginated}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        order={order}
+        orderBy={orderBy}
+        onRequestSort={handleRequestSort}
+        />
 
       <TablePagination
         component="div"
@@ -102,10 +141,10 @@ const DebenturesPage: React.FC = () => {
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-      />
+        />
 
       <DebentureDialog open={dialogOpen} initial={editing} onClose={() => setDialogOpen(false)} onSave={handleSave} />
-    </div>
+    </Box>
   )
 }
 

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.routes import analytics_caracteristicas, analytics_evolucao, coleta_balcao, coleta_caracteristicas, debentures
 from app.config import load_config, get_redis
 

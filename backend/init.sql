@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS debentures.balcao (
     data_do_negocio DATE NOT NULL,
     codigo_do_ativo VARCHAR NOT NULL,
     quantidade INTEGER NOT NULL,
-    preco_unitario BIGINT NOT NULL,
-    volume_financeiro BIGINT NOT NULL,
+    preco_unitario BIGINT,
+    volume_financeiro BIGINT,
     taxa BIGINT
 );
 

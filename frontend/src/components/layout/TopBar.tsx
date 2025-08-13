@@ -5,7 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 type Props = { onMenuClick: () => void }
 
 const TopBar: React.FC<Props> = ({ onMenuClick }) => (
-  <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+  <AppBar position="fixed" sx={{ backgroundColor: '#061569ff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
     <Toolbar>
       <IconButton edge="start" color="inherit" onClick={onMenuClick} aria-label="menu" sx={{ mr: 2 }}>
         <MenuIcon />

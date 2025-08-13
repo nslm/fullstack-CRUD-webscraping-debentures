@@ -39,11 +39,13 @@ async def scraper_balcao(start_date:  str, final_date: str):
                                "Taxa Negócio": "taxa" }, inplace=True)
             
             df["data_do_negocio"] = df["data_do_negocio"].apply(lambda x:datetime.strptime(str(x), "%d/%m/%Y").strftime("%Y-%m-%d"))
-            df["preco_unitario"] = df["preco_unitario"].apply(lambda x:int(float(str(x).replace(',','.'))*10**6))
-            df["volume_financeiro"] = df["volume_financeiro"].apply(lambda x:int(float(str(x).replace(',','.'))*10**2))
-            df["taxa"] = df["taxa"].apply(lambda x:int(float(str(x).replace(',','.'))*10**4) if str(x).lower() not in ('nan', '-') else None)
+            df["preco_unitario"] = df["preco_unitario"].apply(lambda x:int(float(str(x).replace(',','.'))*10**2) if str(x).lower() not in ('nan', 'na', 'none', '-', '') else None)
+            df["volume_financeiro"] = df["volume_financeiro"].apply(lambda x:int(float(str(x).replace(',','.'))*10**6) if str(x).lower() not in ('nan', 'na', 'none', '-', '') else None)
+            df["taxa"] = df["taxa"].apply(lambda x:int(float(str(x).replace(',','.'))*10**4) if str(x).lower() not in ('nan', 'na', 'none', '-', '') else None)
             df['taxa'] = df['taxa'].astype('Int64')
-            
+            df['preco_unitario'] = df['preco_unitario'].astype('Int64')
+            df['volume_financeiro'] = df['volume_financeiro'].astype('Int64')
+
             data = df.to_dict(orient='list')
             return {"status": "ok", "data": data}
     

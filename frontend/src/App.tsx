@@ -26,8 +26,8 @@ export default function App() {
           flexGrow: 1,
           p: 2,              
           transition: 'margin 0.3s',
-          marginLeft: open ? `${drawerWidth}px` : 0,
-          marginRight: 0
+          marginLeft: open ? `${drawerWidth}px` : `${drawerWidth/2}px`,
+          marginRight: open ? 0: `${drawerWidth/2}px`
         }}>
         <Toolbar />
         <Routes>
