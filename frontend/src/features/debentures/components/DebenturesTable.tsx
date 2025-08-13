@@ -1,12 +1,9 @@
-import React, { useState } from 'react'
-import {
-  Table, TableHead, TableRow, TableCell, TableBody, IconButton, Paper, TableContainer, TableSortLabel
-} from '@mui/material'
+import React from 'react'
+import { Table, TableHead, TableRow, TableCell, TableBody, IconButton, Paper, TableContainer, TableSortLabel } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { Debenture } from './debentureTypes'
+import { Debenture } from '../types/DebenturesTypes'
 
 type Order = 'asc' | 'desc'
 

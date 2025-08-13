@@ -1,0 +1,95 @@
+import React from "react";
+import { Grid, Typography, CircularProgress, Box } from "@mui/material";
+import { DayPicker, DayPickerProps, Matcher } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+import { format, isAfter, parseISO } from "date-fns";
+import { DateFilterType } from "../types/AutomationsTypes";
+
+type Props = {
+  dateFilter: DateFilterType;
+  setDateFilter: React.Dispatch<React.SetStateAction<DateFilterType>>;
+  markedDates: string[]; // ISO strings (yyyy-MM-dd)
+  notWorkdayList: string[]; // ISO strings
+  lastWorkday: string; // ISO string
+  loading: boolean;
+  parseDate: (iso: string) => Date; // convert ISO string -> Date
+};
+
+export default function AutomationsDateFilter({
+  dateFilter,
+  setDateFilter,
+  markedDates,
+  notWorkdayList,
+  lastWorkday,
+  loading,
+  parseDate,
+}: Props) {
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+
+  const buildDayPickerProps = (
+    selectedDate: string,
+    field: "startDate" | "finalDate"
+  ): DayPickerProps => {
+    const modifiers: Record<string, Matcher | Matcher[]> = {
+      marked: markedDates.map(parseDate),
+      startSelected: parseDate(selectedDate),
+      notWorkdayPassed: notWorkdayList.map(parseDate),
+      lastWorkday: parseDate(lastWorkday),
+      pastWorkdays: (date) => {
+        const lw = parseDate(lastWorkday);
+        const dISO = format(date, 'yyyy-MM-dd');                                    
+        if (isAfter(date, lw)) return false;                                  
+        if (markedDates.includes(dISO)) return false;                                    
+        if (notWorkdayList.includes(dISO)) return false;                                    
+        return true; 
+      },
+      disabledFromLastWorkdayOnwards: (date) => {
+        const lw = parseDate(lastWorkday);
+        return isAfter(date, lw);
+      }
+};
+
+    return {
+      mode: "single", 
+      selected: parseDate(dateFilter[field]), 
+      onSelect: (date) => { if (date) 
+          setDateFilter(prev => ({ ...prev, [field]: format(date, 'yyyy-MM-dd') }));
+        },
+      modifiers,
+      modifiersClassNames: {
+        marked: "marked-day",
+        startSelected: 'start-selected-day',
+        notWorkdayPassed: "notworkday-day",
+        lastWorkday: "lastworkday-day",
+        pastWorkdays: "past-workday-day",
+      },
+      disabled: (date) => { const lw = parseDate(lastWorkday); return isAfter(date, lw); },
+      modifiersStyles: {
+        marked: { backgroundColor: "#1e8d22ff", color: "white" },
+        startSelected: { backgroundColor: '#0123e7ff', color: 'white' },
+        pastWorkdays: { backgroundColor: "#e7e6e7ff", color: "black" },
+        notWorkdayPassed: { backgroundColor: "#f4f5f8ff", color: "black" },
+      },
+
+    };
+  };
+
+  return (
+    <Grid container spacing={2} justifyContent="space-between" sx={{ px: 1 }}>
+      <Grid item>
+        <Typography fontWeight="bold">Data Início {dateFilter.startDate}</Typography>
+        <DayPicker {...buildDayPickerProps(dateFilter.startDate, "startDate")} />
+      </Grid>
+      <Grid item>
+        <Typography fontWeight="bold">Data Fim {dateFilter.finalDate}</Typography>
+        <DayPicker {...buildDayPickerProps(dateFilter.finalDate, "finalDate")} />
+      </Grid>
+    </Grid>
+  );
+}

@@ -5,7 +5,7 @@ import redis.asyncio as Redis
 from typing import Optional
 import json
 
-from app.database.debentures_caracteristicas import insert_debenture_caracteristicas, select_all_debenture_caracteristicas, update_debenture_caracteristicas, delete_debenture_caracteristicas
+from app.database.debentures_crud_caracteristicas import insert_debenture_caracteristicas, select_all_debenture_caracteristicas, update_debenture_caracteristicas, delete_debenture_caracteristicas
 from app.database.connection import get_db_connection
 
 router = APIRouter()

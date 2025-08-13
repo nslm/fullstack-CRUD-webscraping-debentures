@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { Typography, Button, Box, Toolbar, TextField, CircularProgress, TablePagination } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import DebenturesTable from './DebenturesTable'
-import DebentureDialog from './DebentureDialog'
-import useDebentures from '../../hooks/useDebentures'
-import { Debenture } from './debentureTypes'
+import { ROWS_PER_PAGE_OPTIONS, Order} from './../constants/DebenturesConstants';
+import DebenturesTable from '../components/DebenturesTable'
+import DebenturesDialog from '../components/DebenturesDialog'
+import useDebentures from '../hooks/useDebentures'
+import { Debenture } from '../types/DebenturesTypes'
 
 const DebenturesPage: React.FC = () => {
   const { items, loading, error, fetchAll, add, update, remove } = useDebentures()
@@ -67,8 +68,6 @@ const DebenturesPage: React.FC = () => {
     )
   })
 
-
-  type Order = 'asc' | 'desc'
    
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Debenture>('codigo');
@@ -106,7 +105,7 @@ const DebenturesPage: React.FC = () => {
       <Toolbar />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h4">Debentures</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} sx={{backgroundColor: '#061569ff'}}>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} sx={{backgroundColor: '#0723c0ff', fontWeight: 'bold'}}>
           Adicionar
         </Button>
       </Box>
@@ -140,10 +139,10 @@ const DebenturesPage: React.FC = () => {
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
         />
 
-      <DebentureDialog open={dialogOpen} initial={editing} onClose={() => setDialogOpen(false)} onSave={handleSave} />
+      <DebenturesDialog open={dialogOpen} initial={editing} onClose={() => setDialogOpen(false)} onSave={handleSave} />
     </Box>
   )
 }

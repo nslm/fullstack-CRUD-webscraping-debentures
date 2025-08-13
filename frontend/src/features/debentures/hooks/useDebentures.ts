@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Debenture } from '../features/debentures/debentureTypes'
+import { Debenture } from '../types/DebenturesTypes'
+import { ENDPOINT_DEBENTURES, JSON_HEADERS, handleFetchError} from '../constants/DebenturesConstants';
 
-// API base loaded from Vite env (VITE_API_BASE). Fallback to http://localhost:8000.
-const API_BASE = (import.meta.env.VITE_API_BASE as string) || 'http://localhost:8000'
 
 export default function useDebentures() {
   const [items, setItems] = useState<Debenture[]>([])
@@ -13,8 +12,8 @@ export default function useDebentures() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`${API_BASE}/api/debentures/`)
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const res = await fetch(ENDPOINT_DEBENTURES)
+      await handleFetchError(res);
       const data = await res.json()
       setItems(data)
     } catch (err: any) {
@@ -26,47 +25,37 @@ export default function useDebentures() {
 
   useEffect(() => {
     fetchAll()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const add = async (d: Debenture) => {
-    const res = await fetch(`${API_BASE}/api/debentures/`, {
+    const res = await fetch(ENDPOINT_DEBENTURES, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
       body: JSON.stringify(d)
     })
-    if (!res.ok) {
-      const txt = await res.text()
-      throw new Error(txt || `HTTP ${res.status}`)
-    }
+    await handleFetchError(res);
     const created = await res.json()
     setItems(s => [...s, created])
     return created
   }
 
   const update = async (codigo: string, updated: Debenture) => {
-    const res = await fetch(`${API_BASE}/api/debentures/${encodeURIComponent(codigo)}/`, {
+    const res = await fetch(`${ENDPOINT_DEBENTURES}${encodeURIComponent(codigo)}/`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
       body: JSON.stringify(updated)
     })
-    if (!res.ok) {
-      const txt = await res.text()
-      throw new Error(txt || `HTTP ${res.status}`)
-    }
+    await handleFetchError(res);
     const upd = await res.json()
     setItems(s => s.map(i => (i.codigo === codigo ? upd : i)))
     return upd
   }
 
   const remove = async (codigo: string) => {
-    const res = await fetch(`${API_BASE}/api/debentures/${encodeURIComponent(codigo)}/`, {
+    const res = await fetch(`${ENDPOINT_DEBENTURES}${encodeURIComponent(codigo)}/`, {
       method: 'DELETE'
     })
-    if (!res.ok) {
-      const txt = await res.text()
-      throw new Error(txt || `HTTP ${res.status}`)
-    }
+    await handleFetchError(res);
     setItems(s => s.filter(i => i.codigo !== codigo))
     return true
   }

@@ -6,8 +6,8 @@ from typing import Optional
 import pytz
 import json
 
-from app.database.debentures_balcao import insert_debenture_balcao, select_dates_debenture_balcao
-from app.database.logs_balcao import insert_logs_balcao, select_all_logs_balcao
+from app.database.debentures_crud_balcao import insert_debenture_balcao, select_dates_debenture_balcao
+from app.database.logs_coleta_balcao import insert_logs_balcao, select_all_logs_balcao
 from app.database.connection import get_db_connection
 from app.scrapers import scraper_balcao, scraper_last_workday, scraper_not_workday_list
 
@@ -93,7 +93,7 @@ async def add_caracteristicas_route(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/status/{run_id}/")
-async def scraping_status(request: Request, run_id: str):
+async def scraping_status_route(request: Request, run_id: str):
     job_id = f"scraping:debentures_balcao:{run_id}"  
     status = await get_cache(request, job_id, json_loads=False)
     return {"status": status or "Sem status"}

@@ -6,8 +6,8 @@ from typing import Optional
 import pytz
 import json
 
-from app.database.debentures_caracteristicas import insert_debenture_caracteristicas
-from app.database.logs_caracteristicas import insert_logs_caracteristicas, select_all_logs_caracteristicas
+from app.database.debentures_crud_caracteristicas import insert_debenture_caracteristicas
+from app.database.logs_coleta_caracteristicas import insert_logs_caracteristicas, select_all_logs_caracteristicas
 from app.database.connection import get_db_connection
 from app.scrapers import scraper_caracteristicas
 
@@ -88,7 +88,7 @@ async def add_caracteristicas_route(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/status/{run_id}/")
-async def scraping_status(request: Request, run_id: str):
+async def scraping_status_route(request: Request, run_id: str):
     job_id = f"scraping:debentures_caracteristicas:{run_id}" 
     status = await get_cache(request, job_id, json_loads=False)
     return {"status": status or "Sem status"}

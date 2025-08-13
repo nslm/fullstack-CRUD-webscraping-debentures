@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Button, Box
-} from '@mui/material'
-import { Debenture } from './debentureTypes'
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box } from '@mui/material'
+import { Debenture } from '../types/DebenturesTypes'
 
 type Props = {
   open: boolean
@@ -12,7 +9,7 @@ type Props = {
   onSave: (d: Debenture) => void
 }
 
-const DebentureDialog: React.FC<Props> = ({ open, initial = null, onClose, onSave }) => {
+const DebenturesDialog: React.FC<Props> = ({ open, initial = null, onClose, onSave }) => {
   const [taxaStr, setTaxaStr] = useState('0')
 
   const [form, setForm] = useState<Debenture>(() => ({
@@ -91,4 +88,4 @@ const handleChange = (k: keyof Debenture) => (e: React.ChangeEvent<HTMLInputElem
   )
 }
 
-export default DebentureDialog
+export default DebenturesDialog
