@@ -23,6 +23,18 @@ async def delete_cache(request: Request, key: str):
     r = request.app.state.r
     return await r.delete(key)
 
+async def delete_cache_by_prefix(request: Request, prefix: str):
+    r = request.app.state.r
+    pattern = f"{prefix}*"
+    cursor = 0
+
+    while True:
+        cursor, keys = await r.scan(cursor=cursor, match=pattern, count=1000)
+        if keys:
+            await r.delete(*keys)
+        if cursor == 0:
+            break
+
 
 @router.post("/")
 async def add_debenture_route(
@@ -36,6 +48,8 @@ async def add_debenture_route(
             conn,
             data
         )
+        await delete_cache_by_prefix(request, "analytics_caracteristicas_cache:")
+        await delete_cache(request,"analytics_caracteristicas_codigos_cache")
         await delete_cache(request, "get_all_debentures_cache")
         return {"message": "Debenture adicionada com sucesso", "debenture": result}
     except Exception as e:
@@ -73,6 +87,8 @@ async def update_debenture_route(
         )
         if result is None:
             raise HTTPException(status_code=404, detail="Debenture não encontrada")
+        await delete_cache_by_prefix(request, "analytics_caracteristicas:_cache")
+        await delete_cache(request,"analytics_caracteristicas_codigos_cache")
         await delete_cache(request, "get_all_debentures_cache")
         return {"message": "Debenture atualizada com sucesso", "debenture": result}
     except Exception as e:
@@ -92,6 +108,8 @@ async def delete_debenture_route(
         success = await delete_debenture_caracteristicas(conn, codigo)
         if not success:
             raise HTTPException(status_code=404, detail="Debenture não encontrada")
+        await delete_cache_by_prefix(request, "analytics_caracteristicas:_cache")
+        await delete_cache(request,"analytics_caracteristicas_codigos_cache")
         await delete_cache(request, "get_all_debentures_cache")
         return {"message": "Debenture removida com sucesso"}
     except Exception as e:

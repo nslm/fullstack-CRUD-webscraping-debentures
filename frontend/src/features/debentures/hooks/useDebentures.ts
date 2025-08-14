@@ -4,9 +4,35 @@ import { ENDPOINT_DEBENTURES, JSON_HEADERS, handleFetchError} from '../constants
 
 
 export default function useDebentures() {
-  const [items, setItems] = useState<Debenture[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+    function usePersistedState<T>(key: string, defaultValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
+      key = "debenture_" + key;
+      const [state, setState] = useState<T>(() => {
+        try {
+          const saved = localStorage.getItem(key);
+          return saved ? JSON.parse(saved) : defaultValue;
+        } catch {
+          return defaultValue;
+        }
+      });
+  
+      useEffect(() => {
+        try {
+          localStorage.setItem(key, JSON.stringify(state));
+        } catch (err) {
+          console.warn(`Erro salvando ${key} no localStorage`, err);
+        }
+      }, [key, state]);
+  
+      return [state, setState];
+    }
+    const [items, setItems] = usePersistedState<Debenture[]>('items',[])
+    const [loading, setLoading] = usePersistedState('loading', true)
+    const [error, setError] = usePersistedState<string | null>('error', null)
+    const [dialogOpen, setDialogOpen] = usePersistedState('dialogOpen', false)
+    const [editing, setEditing] = usePersistedState<Debenture | null>('editing', null)
+    const [filter, setFilter] = usePersistedState('filter', '')
+    const [page, setPage] = usePersistedState('page', 0)
+    const [rowsPerPage, setRowsPerPage] = usePersistedState('rowsPerPage',10)
 
   const fetchAll = async () => {
     setLoading(true)
@@ -60,5 +86,6 @@ export default function useDebentures() {
     return true
   }
 
-  return { items, loading, error, fetchAll, add, update, remove }
+    return { items, loading, error, fetchAll, add, update, remove, dialogOpen, editing, setEditing,
+          setDialogOpen, filter, setFilter, page, setPage, rowsPerPage, setRowsPerPage}
 }

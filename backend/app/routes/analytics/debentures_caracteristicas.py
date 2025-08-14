@@ -36,7 +36,7 @@ async def analytics_caracteristicas_route(
             detail="É necessário informar pelo menos um código de ativo."
         )
 
-    cache_key = f"analytics_caracteristicas:codigos:{','.join(codigos_list)}"
+    cache_key = f"analytics_caracteristicas_cache:codigos:{','.join(codigos_list)}"
     if cached := await get_cache(request, cache_key):
         return cached
     try:
@@ -45,3 +45,5 @@ async def analytics_caracteristicas_route(
         return debentures
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+    

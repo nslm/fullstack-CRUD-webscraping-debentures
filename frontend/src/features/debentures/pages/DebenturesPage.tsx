@@ -1,19 +1,18 @@
-import React, { useState } from 'react'
-import { Typography, Button, Box, Toolbar, TextField, CircularProgress, TablePagination } from '@mui/material'
+import React, { useState, } from 'react'
+import { Typography, Button, Box, Toolbar, TextField, CircularProgress, TablePagination, Paper } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { ROWS_PER_PAGE_OPTIONS, Order} from './../constants/DebenturesConstants';
 import DebenturesTable from '../components/DebenturesTable'
 import DebenturesDialog from '../components/DebenturesDialog'
 import useDebentures from '../hooks/useDebentures'
 import { Debenture } from '../types/DebenturesTypes'
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const DebenturesPage: React.FC = () => {
-  const { items, loading, error, fetchAll, add, update, remove } = useDebentures()
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [editing, setEditing] = useState<Debenture | null>(null)
-  const [filter, setFilter] = useState('')
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
+
+  const { items, loading, error, fetchAll, add, update, remove, dialogOpen, editing, setEditing,
+    setDialogOpen, filter, setFilter, page, setPage, rowsPerPage, setRowsPerPage} = useDebentures()
+
 
   const handleAddClick = () => {
     setEditing(null)
@@ -74,6 +73,7 @@ const DebenturesPage: React.FC = () => {
 
   const handleRequestSort = (property: keyof Debenture) => {
     const isAsc = orderBy === property && order === 'asc';
+    setPage(0);
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
@@ -101,15 +101,10 @@ const DebenturesPage: React.FC = () => {
   }, [sorted, page, rowsPerPage]);
 
   return (
-    <Box sx={{ px: 6, mr:6, ml:6 }}>
+    <Box sx={{ mr:3, ml:2 }}>
       <Toolbar />
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4">Debentures</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} sx={{backgroundColor: '#0723c0ff', fontWeight: 'bold'}}>
-          Adicionar
-        </Button>
-      </Box>
 
+      <Paper sx={{ p: 2, boxShadow: 3, borderRadius: 2 }}>
       <Box sx={{ mb: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
         <TextField
           label="Buscar (código, emissor, índice)"
@@ -117,12 +112,13 @@ const DebenturesPage: React.FC = () => {
           onChange={(e) => { setFilter(e.target.value); setPage(0) }}
           size="small"
           />
-        <Button onClick={() => fetchAll()} disabled={loading}>Atualizar</Button>
-        {loading && <CircularProgress size={20} />}
+        <Button onClick={() => fetchAll()} disabled={loading} startIcon={loading ? <CircularProgress size={20} /> : <RefreshIcon />}>Atualizar</Button>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ height: '50px', backgroundColor: '#0723c0ff', fontWeight: 'bold', ml: 'auto'}}>
+          Adicionar
+        </Button>
       </Box>
 
       {error && <Box sx={{ color: 'error.main', mb: 2 }}>{error}</Box>}
-
       <DebenturesTable
         items={paginated}
         onEdit={handleEdit}
@@ -141,7 +137,7 @@ const DebenturesPage: React.FC = () => {
         onRowsPerPageChange={handleChangeRowsPerPage}
         rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
         />
-
+      </Paper>
       <DebenturesDialog open={dialogOpen} initial={editing} onClose={() => setDialogOpen(false)} onSave={handleSave} />
     </Box>
   )

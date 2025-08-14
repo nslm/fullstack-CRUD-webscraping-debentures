@@ -54,17 +54,17 @@ const DebenturesTable: React.FC<Props> = ({
         <TableBody>
           {items.map((row) => (
             <TableRow key={row.codigo}>
-              <TableCell>{row.codigo}</TableCell>
-              <TableCell>{row.emissor}</TableCell>
-              <TableCell>{row.vencimento}</TableCell>
-              <TableCell>{row.indice}</TableCell>
-              <TableCell>{row.taxa / 1000}</TableCell>
-              <TableCell align="right">
+              <TableCell sx={{ py: 0.9, fontSize: 15 }}>{row.codigo}</TableCell>
+              <TableCell sx={{ py: 0.9, fontSize: 15 }}>{row.emissor}</TableCell>
+              <TableCell sx={{ py: 0.9, fontSize: 15 }}>{row.vencimento}</TableCell>
+              <TableCell sx={{ py: 0.9, fontSize: 15 }}>{row.indice}</TableCell>
+              <TableCell sx={{ py: 0.9, fontSize: 15 }}>{(row.taxa / 10**4).toFixed(2)}</TableCell>
+              <TableCell sx={{ py: 0.9, fontSize: 15 }} align="right">
                 <IconButton size="small" onClick={() => onEdit(row)} aria-label="editar">
-                  <EditIcon />
+                  <EditIcon/>
                 </IconButton>
                 <IconButton size="small" onClick={() => onDelete(row.codigo)} aria-label="excluir">
-                  <DeleteIcon />
+                  <DeleteIcon/>
                 </IconButton>
               </TableCell>
             </TableRow>

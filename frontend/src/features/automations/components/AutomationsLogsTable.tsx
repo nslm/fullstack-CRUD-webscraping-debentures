@@ -18,7 +18,7 @@ export default function AutomationsLogsTable({ logs, columns, page, rowsPerPage,
   const paginatedLogs = logs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Box sx={{ overflowX: "auto", mt: 1 }}>
+    <Box sx={{ mt: 3.2 }}>
       <Table size="small" stickyHeader>
         <TableHead>
           <TableRow>
@@ -39,7 +39,7 @@ export default function AutomationsLogsTable({ logs, columns, page, rowsPerPage,
         </TableBody>
       </Table>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[]}
         component="div"
         count={logs.length}
         rowsPerPage={rowsPerPage}

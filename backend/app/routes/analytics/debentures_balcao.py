@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Query
 from psycopg import AsyncConnection
-from datetime import datetime, date
+from datetime import date, datetime
 from typing import Optional
 import json
 
-from app.database.debentures_analytics_evolucao import select_debentures_evolucao
+from app.database.debentures_analytics_balcao import select_debentures_balcao, select_debentures_balcao_codigos
 from app.database.connection import get_db_connection
 
 router = APIRouter()
@@ -30,28 +30,43 @@ async def analytics_evolucao_route(
     request: Request = None,
     conn: AsyncConnection = Depends(get_db_connection)
     ):
-    codigos_list = [c.strip().replace('"', '').replace("'",'') for c in codigos.split(",") if c.strip()] 
-
     
+    codigos_list = [c.strip().replace('"', '').replace("'",'') for c in codigos.split(",") if c.strip()] 
     if not codigos_list:
         raise HTTPException(
             status_code=400,
             detail="É necessário informar pelo menos um código de ativo."
         )
     
-    cache_key = f"analytics_evolucao_cache:codigos:{','.join(codigos_list)}-data_inicio:{data_inicio}-data_fim:{data_fim}"
     if data_inicio > data_fim:
         raise HTTPException(status_code=500, detail="A Data Inicial deve ser a mesma ou anterior a Data Final.")
     
+    cache_key = f"analytics_balcao_cache:codigos:{','.join(codigos_list)}-data_inicio:{data_inicio}-data_fim:{data_fim}"
     if cached := await get_cache(request, cache_key):
         return cached      
     try:
         data_inicio = data_inicio.strftime("%Y-%m-%d")
         data_fim = data_fim.strftime("%Y-%m-%d")
 
-        debentures = await select_debentures_evolucao(conn, codigos_list, data_inicio, data_fim)
+        debentures = await select_debentures_balcao(conn, codigos_list, data_inicio, data_fim)
         await set_cache(request, cache_key, json.dumps(debentures, default=lambda obj: obj.isoformat() if isinstance(obj, (date, datetime)) else str(obj)), 1800)
         return debentures
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+
+@router.get("/codigos/")
+async def analytics_evolucao_route(
+    request: Request = None,
+    conn: AsyncConnection = Depends(get_db_connection)
+    ):
+        
+    cache_key = f"analytics_balcao_codigos_cache"
+    if cached := await get_cache(request, cache_key):
+        return cached      
+    try:
+        debentures = await select_debentures_balcao_codigos(conn)
+        await set_cache(request, cache_key, json.dumps(debentures, default=lambda obj: obj.isoformat() if isinstance(obj, (date, datetime)) else str(obj)), 1800)
+        return debentures
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

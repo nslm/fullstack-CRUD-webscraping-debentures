@@ -1,6 +1,6 @@
 import { API_BASE } from '../../../config/api'
 
-export const ROWS_PER_PAGE_OPTIONS = [5, 10, 25];
+export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
 
 export type Order = 'asc' | 'desc';
 

@@ -26,6 +26,19 @@ async def delete_cache(request: Request, key: str):
     r = request.app.state.r
     return await r.delete(key)
 
+async def delete_cache_by_prefix(request: Request, prefix: str):
+    r = request.app.state.r
+    pattern = f"{prefix}*"
+    cursor = 0
+
+    while True:
+        cursor, keys = await r.scan(cursor=cursor, match=pattern, count=1000)
+        if keys:
+            await r.delete(*keys)
+        if cursor == 0:
+            break
+
+
 async def insert_logs(conn, status, start_date, final_date):
     try:
         br_tz = pytz.timezone('America/Sao_Paulo')
@@ -80,6 +93,9 @@ async def add_caracteristicas_route(
         )
         await set_cache(request, job_id, "Dados atualizados com sucesso!")
         resp = await insert_logs(conn, "Sucesso", start_date, final_date)
+        await delete_cache_by_prefix(request, "analytics_balcao_cache:")
+        await delete_cache_by_prefix(request, "analytics_evolucao_cache:")
+        await delete_cache(request,"analytics_caracteristicas_codigos_cache")
         await delete_cache(request,"logs_debentures_balcao_cache")
         await delete_cache(request,"balcao_dates_cache")
         return {"message": "Debentures publicas adicionadas com sucesso", "debentures": result, "log_status":resp}
@@ -96,7 +112,7 @@ async def add_caracteristicas_route(
 async def scraping_status_route(request: Request, run_id: str):
     job_id = f"scraping:debentures_balcao:{run_id}"  
     status = await get_cache(request, job_id, json_loads=False)
-    return {"status": status or "Sem status"}
+    return {"status": status or "Status não disponível"}
 
 @router.get("/logs/")
 async def all_log_route(request:Request, conn: AsyncConnection = Depends(get_db_connection)):

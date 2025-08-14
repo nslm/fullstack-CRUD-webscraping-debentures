@@ -10,7 +10,7 @@ const TopBar: React.FC<Props> = ({ onMenuClick }) => (
       <IconButton edge="start" color="inherit" onClick={onMenuClick} aria-label="menu" sx={{ mr: 2 }}>
         <MenuIcon />
       </IconButton>
-      <Typography variant="h6" noWrap component="div">Vite MUI Debentures</Typography>
+      <Typography variant="h6" noWrap component="div"> Fullstack CRUD Debentures </Typography>
     </Toolbar>
   </AppBar>
 )

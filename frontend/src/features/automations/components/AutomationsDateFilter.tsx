@@ -72,7 +72,7 @@ export default function AutomationsDateFilter({
       disabled: (date) => { const lw = parseDate(lastWorkday); return isAfter(date, lw); },
       modifiersStyles: {
         marked: { backgroundColor: "#1e8d22ff", color: "white" },
-        startSelected: { backgroundColor: '#0123e7ff', color: 'white' },
+        startSelected: { backgroundColor: '#0823bbff', color: 'white' },
         pastWorkdays: { backgroundColor: "#e7e6e7ff", color: "black" },
         notWorkdayPassed: { backgroundColor: "#f4f5f8ff", color: "black" },
       },
@@ -81,15 +81,43 @@ export default function AutomationsDateFilter({
   };
 
   return (
-    <Grid container spacing={2} justifyContent="space-between" sx={{ px: 1 }}>
+    <Grid container spacing={2} justifyContent="space-between">
       <Grid item>
+        <Grid sx={{ px: 2, mt: 2 }}>
         <Typography fontWeight="bold">Data Início {dateFilter.startDate}</Typography>
+        </Grid>
+        <Grid sx={{ px: 2, mt: 2 }}>
         <DayPicker {...buildDayPickerProps(dateFilter.startDate, "startDate")} />
+        </Grid>
       </Grid>
       <Grid item>
+        <Grid sx={{ px: 2, mt: 2 }}>
         <Typography fontWeight="bold">Data Fim {dateFilter.finalDate}</Typography>
+        </Grid>
+        <Grid sx={{ px: 2, mt: 2 }}>
         <DayPicker {...buildDayPickerProps(dateFilter.finalDate, "finalDate")} />
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={1} sx={{ ml:4,  mr:4, mt:2 }}  justifyContent="space-between"  alignItems="center">
+        <Grid item display="flex" alignItems="center" gap={1}>
+          <Box sx={{ width: 20, height: 20, bgcolor: "#f4f5f8ff", border: "1px solid #ccc" }} />
+          <Typography variant="body2">Dias não úteis</Typography>
+        </Grid>
+        <Grid item display="flex" alignItems="center" gap={1}>
+          <Box sx={{ width: 20, height: 20, bgcolor: "#e7e6e7ff", border: "1px solid #ccc" }} />
+          <Typography variant="body2">Dias úteis</Typography>
+        </Grid>
+        <Grid item display="flex" alignItems="center" gap={1}>
+          <Box sx={{ width: 20, height: 20, bgcolor: "#1e8d22ff", border: "1px solid #ccc" }} />
+          <Typography variant="body2">Datas coletadas</Typography>
+        </Grid>
+        <Grid item display="flex" alignItems="center" gap={1}>
+          <Box sx={{ width: 20, height: 20, bgcolor: "#0823bbff", border: "1px solid #ccc" }} />
+          <Typography variant="body2">Data selecionada</Typography>
+        </Grid>
       </Grid>
     </Grid>
+    
   );
 }

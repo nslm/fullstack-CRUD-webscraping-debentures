@@ -5,18 +5,41 @@ import { LogEntry, DateFilterType } from "../types/AutomationsTypes";
 import { parseISO } from "date-fns";
 
 export function useAutomations() {
-  const [statuses, setStatuses] = useState<Record<string, string | undefined>>({});
-  const [loading, setLoading] = useState<Record<string, boolean>>({});
-  const [openLogs, setOpenLogs] = useState<Record<string, boolean>>({});
-  const [page, setPage] = useState<Record<string, number>>({});
-  const [rowsPerPage, setRowsPerPage] = useState<Record<string, number>>({ caracteristicas: 5, balcao: 5 });
-  const [openDateFilter, setOpenDateFilter] = useState(false);
-  const [dateFilter, setDateFilter] = useState<DateFilterType>({ startDate: "", finalDate: "" });
-  const [lastWorkday, setLastWorkday] = useState<string>("");  
-  const [markedDates, setMarkedDates] = useState<string[]>([]);  
-  const [notWorkdayList, setNotWorkdayList] = useState<string[]>([]);
-  const [logs, setLogs] = useState<Record<string, LogEntry[]>>({});
-  const [dateFilterLoading, setDateFilterLoading] = useState(true);
+
+    function usePersistedState<T>(key: string, defaultValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
+      key = "automation_" + key;
+      const [state, setState] = useState<T>(() => {
+        try {
+          const saved = localStorage.getItem(key);
+          return saved ? JSON.parse(saved) : defaultValue;
+        } catch {
+          return defaultValue;
+        }
+      });
+  
+      useEffect(() => {
+        try {
+          localStorage.setItem(key, JSON.stringify(state));
+        } catch (err) {
+          console.warn(`Erro salvando ${key} no localStorage`, err);
+        }
+      }, [key, state]);
+  
+      return [state, setState];
+    }
+
+  const [statuses, setStatuses] = usePersistedState<Record<string, string | undefined>>('statuses', {});
+  const [loading, setLoading] = usePersistedState<Record<string, boolean>>('loading', {});
+  const [openLogs, setOpenLogs] = usePersistedState<Record<string, boolean>>('openLogs', {"balcao":true, "caracteristicas":true});
+  const [page, setPage] = usePersistedState<Record<string, number>>('page', {});
+  const [rowsPerPage, setRowsPerPage] = usePersistedState<Record<string, number>>('rowsPerPage', { caracteristicas: 10, balcao: 10 });
+  const [openDateFilter, setOpenDateFilter] = usePersistedState('openDateFilter', false);
+  const [dateFilter, setDateFilter] = usePersistedState<DateFilterType>('dateFilter', { startDate: "", finalDate: "" });
+  const [lastWorkday, setLastWorkday] = usePersistedState<string>('lastWorkday', "");  
+  const [markedDates, setMarkedDates] = usePersistedState<string[]>('markedDates', []);  
+  const [notWorkdayList, setNotWorkdayList] = usePersistedState<string[]>('notWorkdayList', []);
+  const [logs, setLogs] = usePersistedState<Record<string, LogEntry[]>>('logs', {});
+  const [dateFilterLoading, setDateFilterLoading] = usePersistedState('dateFilterLoading', true);
 
   const intervalsRef = useRef<Record<string, number>>({});
 
@@ -49,14 +72,18 @@ export function useAutomations() {
     const finalStatuses = [
       "Dados atualizados com sucesso!",
       "Erro na coleta.",
-      "Erro ao tentar salvar na base."
+      "Erro ao tentar salvar na base.",
     ];
 
     const fetchStatus = async () => {
       try {
         const res = await fetch(`${API_BASE}/api/coleta/${id}/status/${storedRunId}/`);
         const data = await res.json();
-        setStatuses(prev => ({ ...prev, [id]: data.status || "Status não disponível" }));
+        setStatuses(prev => ({ ...prev, [id]: data.status || (() => {
+                                                                setLoading(prev => ({ ...prev, [id]: false }));
+                                                                return "Status não disponível";
+                                                              })() }));
+        
 
         if (finalStatuses.includes(data.status)) {
           clearInterval(intervalsRef.current[id]);
@@ -67,7 +94,7 @@ export function useAutomations() {
         }
 
       } catch {
-        setStatuses(prev => ({ ...prev, [id]: "Status não disponível" }));
+        setLoading(prev => ({ ...prev, [id]: false }));
       }
     };
 
@@ -76,6 +103,7 @@ export function useAutomations() {
   };
 
   const startAutomation = async (id: string) => {
+    setStatuses(prev => ({ ...prev, [id]: "\u00A0"}));
     setLoading(prev => ({ ...prev, [id]: true }));
     const runId = uuidv4();
     try {
@@ -88,16 +116,16 @@ export function useAutomations() {
       const res = await fetch(`${API_BASE}/api/coleta/${id}/start/`, options);
       const json = await res.json();
       if (!res.ok) {
-        setStatuses(prev => ({ ...prev, [id]: "Status não disponível" }));
         setLoading(prev => ({ ...prev, [id]: false }));
+        setStatuses(prev => ({ ...prev, [id]: "Status não disponível" }));
         return;
       }
 
       fetchLogs(id);
       if (id === "balcao") fetchBalcaoDates();
     } catch {
-      setStatuses(prev => ({ ...prev, [id]: "Status não disponível" }));
       setLoading(prev => ({ ...prev, [id]: false }));
+      setStatuses(prev => ({ ...prev, [id]: "Status não disponível" }));
     }
   };
 

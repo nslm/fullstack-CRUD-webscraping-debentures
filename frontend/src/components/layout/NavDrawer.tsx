@@ -1,6 +1,6 @@
 import React from 'react'
 import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Divider } from '@mui/material'
-import AutomationIcon from '@mui/icons-material/AutoAwesome'
+import AutomationIcon from '@mui/icons-material/SmartToyOutlined';;
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
 import AnalyticsIcon from '@mui/icons-material/Analytics'
 import { useLocation } from 'react-router-dom'
@@ -33,10 +33,13 @@ const NavDrawer: React.FC<Props> = ({ open, onNavigate, drawerWidth }) => {
           <ListItemButton
             key={item.path}
             selected={location.pathname === item.path}
-            onClick={() => onNavigate(item.path)}
+            onClick={() => {
+              onNavigate(item.path);
+            }}
+            sx={{px:4, mt:0}}
           >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} />
+            <ListItemIcon sx={{mt:2, mb:2}}>{item.icon}</ListItemIcon>
+            <ListItemText sx={{mt:2, mb:2}} primary={item.text} primaryTypographyProps={{ fontWeight: 'bold' }}/>
           </ListItemButton>
         ))}
       </List>

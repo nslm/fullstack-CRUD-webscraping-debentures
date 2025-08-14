@@ -1,10 +1,11 @@
 -- SELECT
 SELECT 
     codigo, 
+    situacao, 
     emissor, 
     vencimento, 
     indice, 
-    taxa 
+    taxa
 FROM
     debentures.caracteristicas 
 WHERE 
