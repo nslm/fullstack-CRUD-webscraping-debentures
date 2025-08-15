@@ -2,17 +2,16 @@ import React from 'react'
 import { Table, TableHead, TableRow, TableCell, TableBody, IconButton, Paper, TableContainer, TableSortLabel } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Debenture } from '../types/DebenturesTypes'
 
-type Order = 'asc' | 'desc'
+
 
 type Props = {
   items: Debenture[]
   onEdit: (d: Debenture) => void
   onDelete: (code: string) => void
-  order: Order
-  orderBy: keyof Debenture
+  order: any
+  orderBy: any
   onRequestSort: (property: keyof Debenture) => void
 }
 
@@ -40,7 +39,6 @@ const DebenturesTable: React.FC<Props> = ({
                   active={orderBy === headCell.id}
                   direction={orderBy === headCell.id ? order : 'asc'}
                   onClick={() => onRequestSort(headCell.id as keyof Debenture)}
-                  IconComponent={ExpandMoreIcon}
                 >
                   {headCell.label}
                 </TableSortLabel>

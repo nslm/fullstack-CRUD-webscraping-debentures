@@ -68,8 +68,8 @@ const DebenturesPage: React.FC = () => {
   })
 
    
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Debenture>('codigo');
+  const [order, setOrder] = React.useState<Order|undefined>(undefined);
+  const [orderBy, setOrderBy] = React.useState<keyof Debenture|string>('asc');
 
   const handleRequestSort = (property: keyof Debenture) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -79,7 +79,7 @@ const DebenturesPage: React.FC = () => {
   };
 
   const sorted = React.useMemo(() => {
-    return [...filtered].sort((a, b) => {
+    return [...filtered].sort((a:any, b:any) => {
       const valA = a[orderBy];
       const valB = b[orderBy];
 
