@@ -73,48 +73,6 @@ export function useAnalytics() {
   };
 
 
-  function getColor(idx: number, total: number) {
-    const startHue = 140; 
-    const endHue = 200;  
-    const hue = startHue + ((endHue - startHue) * idx) / (total - 1);
-    const saturation = 40; 
-    const lightness = 70;
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  }
-
-   function formatValue(value: number) {
-    if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + "MI";
-    if (value >= 1_000) return (value / 1_000).toFixed(1) + "K";
-    return value.toString();
-  }
-
-  function formatValueRS(value: number) {
-    if (value >= 1_000_000) return `R$ ${(value / 1_000_000).toFixed(1)}MI`;
-    if (value >= 1_000)     return `R$ ${(value / 1_000).toFixed(1)}K`;
-    return `R$ ${value.toString()}`;
-  }
-
-  function formatNumber(value: number) {
-    return value.toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-  }
-
-  function formatNumberRS(value: number) {
-    return value.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-  }
-
-  function formatPercent(value: number) {
-    return `${value.toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}%`;
-  }
-
   return {
     loading, setLoading,
     openCollapse, setOpenCollapse,

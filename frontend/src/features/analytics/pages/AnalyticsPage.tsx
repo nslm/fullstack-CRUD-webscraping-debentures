@@ -63,7 +63,7 @@ const AnalyticsPage: React.FC = () => {
 
 
   return (
-    <Grid mt={8} mb={8} ml={0} mr={0} container spacing={8}>
+    <Grid mt={4} mb={8} ml={0} mr={0} container spacing={8}>
       <Grid container direction="row" ml={2} mt={4}>
         {openCollapse && (
         <Grid

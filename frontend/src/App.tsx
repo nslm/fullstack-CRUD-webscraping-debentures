@@ -6,32 +6,14 @@ import AnalyticsPage from './features/analytics/pages/AnalyticsPage'
 import TopBar from './components/layout/TopBar'
 import NavDrawer from './components/layout/NavDrawer'
 import { Box, Toolbar } from '@mui/material'
+
+
+
 const drawerWidth = 240
 
 export default function App() {
-    function usePersistedState<T>(key: string, defaultValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
-      key = "app_" + key;
-      const [state, setState] = useState<T>(() => {
-        try {
-          const saved = localStorage.getItem(key);
-          return saved ? JSON.parse(saved) : defaultValue;
-        } catch {
-          return defaultValue;
-        }
-      });
-  
-      useEffect(() => {
-        try {
-          localStorage.setItem(key, JSON.stringify(state));
-        } catch (err) {
-          console.warn(`Erro salvando ${key} no localStorage`, err);
-        }
-      }, [key, state]);
-  
-      return [state, setState];
-    }
 
-  const [open, setOpen] = usePersistedState('open', true)
+  const [open, setOpen] = useState(true);
   const navigate = useNavigate()
 
   const handleToggle = () => setOpen((s) => !s)

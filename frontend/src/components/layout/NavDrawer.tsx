@@ -1,13 +1,15 @@
 import React from 'react'
-import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Divider } from '@mui/material'
-import AutomationIcon from '@mui/icons-material/SmartToyOutlined';;
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
-import AnalyticsIcon from '@mui/icons-material/Analytics'
-import { useLocation } from 'react-router-dom'
+import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Divider } from '@mui/material';
+import AutomationIcon from '@mui/icons-material/DownloadForOffline';
+import MonetizationOnIcon from '@mui/icons-material/Receipt';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import { useLocation } from 'react-router-dom';
 
 type Props = { open: boolean; onNavigate: (path: string) => void; drawerWidth: number }
 
+
 const NavDrawer: React.FC<Props> = ({ open, onNavigate, drawerWidth }) => {
+
   const location = useLocation()
   const items = [
     { text: 'Automações', icon: <AutomationIcon />, path: '/automacoes' },
