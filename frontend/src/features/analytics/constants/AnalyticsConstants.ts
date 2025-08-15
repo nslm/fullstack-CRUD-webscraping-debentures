@@ -41,9 +41,9 @@ export function formatNumberRS(value: number) {
     }
 
 
-export function formatPercent(value: number) {
+export function formatPercent(value: number, decimal: number = 2) {
     return `${value.toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: decimal,
+        maximumFractionDigits: decimal,
     })}%`;
     }
