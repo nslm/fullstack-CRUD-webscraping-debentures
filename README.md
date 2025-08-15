@@ -123,11 +123,11 @@ GET    /api/coleta/balcao/notworkdaylist/
 ```
 
 Observações: 
--`/api/coleta/XXX/status/{run_id}/` Serve para retornar o status da automação de coleta que está rodando, por isso um uuid é requerido no payload do endpoint /start/.
--`/api/coleta/XXX/logs/` Logs de execução de cada automação de coleta.
--`/api/coleta/balcao/dates/` Retorna as datas já capturdas pela automação de negociações de balcão do mercado secundario.
--`/api/coleta/balcao/lastworkday/` Obtem o ultimo dia util do endpoint da B3.
--`/api/coleta/balcao/notworkdaylist/` Obtem uma lista de dias não-uteis dos meses.
+- `/api/coleta/XXX/status/{run_id}/` Serve para retornar o status da automação de coleta que está rodando, por isso um uuid é requerido no payload do endpoint /start/.
+- `/api/coleta/XXX/logs/` Logs de execução de cada automação de coleta.
+- `/api/coleta/balcao/dates/` Retorna as datas já capturdas pela automação de negociações de balcão do mercado secundario.
+- `/api/coleta/balcao/lastworkday/` Obtem o ultimo dia util do endpoint da B3.
+- `/api/coleta/balcao/notworkdaylist/` Obtem uma lista de dias não-uteis dos meses.
 
 
 Exemplos payload:
