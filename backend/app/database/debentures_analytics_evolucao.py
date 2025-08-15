@@ -41,32 +41,3 @@ async def select_debentures_evolucao(
             "taxa": taxa_list
         }
 
-
-
-## passando for formato:
-#
-#{
-#        "data_do_negocio": "2025-07-28",
-#        "codigo_do_ativo": "BLMN12",
-#        "volume_medio_diario": 11053400.0,
-#        "taxa_media_ponderada": 8.6501
-#    },
-#    {
-#        "data_do_negocio": "2025-07-28",
-#        "codigo_do_ativo": "SMTO14",
-#        "volume_medio_diario": 375668793.75,
-#        "taxa_media_ponderada": 7.902734513330533
-#    },
-#
-## para o formato:
-#
-# "volume": [{ 
-#     "data_do_negocio": "2025-07-28", 
-#     "BLMN12": 11053400.0, 
-#     "SMTO14": 375668793.75, }
-# ]
-# "taxa": [{ 
-#     "data_do_negocio": "2025-07-28", 
-#     "BLMN12": 8.6501, 
-#     "SMTO14": 7.90 },
-# ]

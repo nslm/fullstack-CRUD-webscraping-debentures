@@ -18,7 +18,6 @@ export function usePersistedState<T>(key: string, defaultValue: T): [T, React.Di
     try {
       localStorage.setItem(storageKey, JSON.stringify(state));
     } catch {
-      // ignore write errors
     }
   }, [storageKey, state]);
 
@@ -26,12 +25,12 @@ export function usePersistedState<T>(key: string, defaultValue: T): [T, React.Di
 }
 
 export function useAnalytics() {
-  const [loading, setLoading] = usePersistedState<boolean>("loading", false);
-  const [openCollapse, setOpenCollapse] = usePersistedState<boolean>("openCollapse", true);
-  const [openCollapseTables, setOpenCollapseTables] = usePersistedState<boolean>("openCollapseTables", true);
-  const [openCollapseGraphPaper, setOpenCollapseGraphPaper] = usePersistedState<boolean>("openCollapseGraphPaper", true);
-  const [openCollapseGraph1, setOpenCollapseGraph1] = usePersistedState<boolean>("openCollapseGraph1", true);
-  const [openCollapseGraph2, setOpenCollapseGraph2] = usePersistedState<boolean>("openCollapseGraph2", true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [openCollapse, setOpenCollapse] = useState<boolean>(true);
+  const [openCollapseTables, setOpenCollapseTables] = useState<boolean>(true);
+  const [openCollapseGraphPaper, setOpenCollapseGraphPaper] = useState<boolean>(true);
+  const [openCollapseGraph1, setOpenCollapseGraph1] = useState<boolean>(true);
+  const [openCollapseGraph2, setOpenCollapseGraph2] = useState<boolean>(true);
   const [ativos, setAtivos] = usePersistedState<string[]>("ativos", ["PETR17", "RIS424", "SBSPE9"]);
   const [codigosUnicos, setCodigosUnicos] = usePersistedState<string[]>("codigosUnicos", []);
   const [ativosAutoComplete, setAtivosAutoComplete] = usePersistedState<string[]>("ativosAutoComplete", []);
@@ -75,8 +74,8 @@ export function useAnalytics() {
 
 
   function getColor(idx: number, total: number) {
-    const startHue = 140; // verde-azulado
-    const endHue = 200;   // azul mais puro
+    const startHue = 140; 
+    const endHue = 200;  
     const hue = startHue + ((endHue - startHue) * idx) / (total - 1);
     const saturation = 40; 
     const lightness = 70;

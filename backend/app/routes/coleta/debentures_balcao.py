@@ -9,7 +9,7 @@ import json
 from app.database.debentures_crud_balcao import insert_debenture_balcao, select_dates_debenture_balcao
 from app.database.logs_coleta_balcao import insert_logs_balcao, select_all_logs_balcao
 from app.database.connection import get_db_connection
-from app.scrapers import scraper_balcao, scraper_last_workday, scraper_not_workday_list
+from app.automations import scraper_balcao, scraper_last_workday, scraper_not_workday_list, transformation_balcao, transformation_last_workday, transformation_not_workday_list
 
 router = APIRouter()
 
@@ -61,8 +61,18 @@ async def add_caracteristicas_route(
     request: Request,
     conn: AsyncConnection = Depends(get_db_connection)
 ):
-    
     data = await request.json()
+
+    async def check_status(response):
+        if response["status"] == "erro":
+            await set_cache(request, job_id, "Erro na coleta.")
+            e = str(response["detalhe"])
+            response = await insert_logs(conn, "Erro", start_date, final_date)
+            if response.startswith("Erro"):
+                e += ' '
+                e += str(response)
+            raise HTTPException(status_code=500, detail=e)
+
     run_id = data["run_id"]
     job_id = f"scraping:debentures_balcao:{run_id}"   
     await set_cache(request, job_id, "Coleta iniciada...")
@@ -75,17 +85,13 @@ async def add_caracteristicas_route(
         raise HTTPException(status_code=500, detail="A Data Inicial deve ser a mesma ou anterior a Data Final.")
     
     scraping = await scraper_balcao(start_date, final_date)
-    if scraping["status"] == "erro":
-        await set_cache(request, job_id, "Erro na coleta.")
-        e = str(scraping["detalhe"])
-        resp = await insert_logs(conn, "Erro", start_date, final_date)
-        if resp.startswith("Erro"):
-            e += ' '
-            e += str(resp)
-        raise HTTPException(status_code=500, detail=e)
+    await check_status(scraping)
+    scraping_transformed = await transformation_balcao(scraping["resp"])
+    await check_status(scraping_transformed)
+
     
     await set_cache(request, job_id, "Inserindo na Base.")
-    data = scraping["data"]
+    data = scraping_transformed["data"]
     try:
         result = await insert_debenture_balcao(
             conn,
@@ -121,7 +127,6 @@ async def all_log_route(request:Request, conn: AsyncConnection = Depends(get_db_
         return cached
     try:
         debentures = await select_all_logs_balcao(conn)
-        #await set_cache(request, cache_key, json.dumps(debentures), 1800)
         await set_cache(request, cache_key, json.dumps(debentures, default=lambda obj: obj.isoformat() if isinstance(obj, (date, datetime)) else str(obj)), 1800)
         return debentures
     except Exception as e:
@@ -143,32 +148,44 @@ async def all_dates_route(request: Request, conn: AsyncConnection = Depends(get_
     
 @router.get("/lastworkday/")
 async def last_workday_route(request: Request):
+    async def check_status(resp):
+        if resp["status"] == "erro":
+            e = resp["detalhe"]
+            raise HTTPException(status_code=500, detail=e)
+        
     cache_key = "lastworkday_cache"
     if cached := await get_cache(request, cache_key):
         return cached
     
     try:
         scraping = await scraper_last_workday()
-        if scraping["status"] == "erro":
-            e = scraping["detalhe"]
-            raise HTTPException(status_code=500, detail=e)
-        await set_cache(request, cache_key, json.dumps({"last_workday": scraping["last_workday"]}), 1800)
+        await check_status(scraping)
+        scraping_transformed = await transformation_last_workday(scraping["resp"])
+        await check_status(scraping_transformed)
+
+        await set_cache(request, cache_key, json.dumps({"last_workday": scraping_transformed["last_workday"]}), 1800)
         return {"last_workday":scraping["last_workday"]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.get("/notworkdaylist/")
 async def last_workday_route(request: Request):
+    async def check_status(resp):
+        if resp["status"] == "erro":
+            e = resp["detalhe"]
+            raise HTTPException(status_code=500, detail=e)
+        
     cache_key = "notworkdaylist_cache"
     if cached := await get_cache(request, cache_key):
         return cached
 
     try:
         scraping = await scraper_not_workday_list()
-        if scraping["status"] == "erro":
-            e = scraping["detalhe"]
-            raise HTTPException(status_code=500, detail=e)
-        await set_cache(request, cache_key, json.dumps({"not_workday_list": scraping["not_workday_list"]}), 1800)
+        await check_status(scraping)
+        scraping_transformed = await transformation_not_workday_list(scraping["resp"])
+        await check_status(scraping_transformed)
+
+        await set_cache(request, cache_key, json.dumps({"not_workday_list": scraping_transformed["not_workday_list"]}), 1800)
         return {"not_workday_list":scraping["not_workday_list"]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

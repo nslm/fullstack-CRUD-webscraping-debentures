@@ -9,7 +9,7 @@ import json
 from app.database.debentures_crud_caracteristicas import insert_debenture_caracteristicas
 from app.database.logs_coleta_caracteristicas import insert_logs_caracteristicas, select_all_logs_caracteristicas
 from app.database.connection import get_db_connection
-from app.scrapers import scraper_caracteristicas
+from app.automations import scraper_caracteristicas, transformation_caracteristicas
 
 router = APIRouter()
 
@@ -49,25 +49,30 @@ async def add_caracteristicas_route(
     request: Request,
     conn: AsyncConnection = Depends(get_db_connection)
 ):
+    data = await request.json()
+    async def check_status(response):
+        if response["status"] == "erro":
+            await set_cache(request, job_id, "Erro na coleta.")
+            e = str(response["detalhe"])
+            response = await insert_logs(conn, "Erro", start_time, None)
+            if response.startswith("Erro"):
+                e += ' '
+                e += str(response)
+            raise HTTPException(status_code=500, detail=e)
+    
     br_tz = pytz.timezone('America/Sao_Paulo')
     start_time = datetime.now(br_tz)
-    data = await request.json()
     run_id = data["run_id"]
     job_id = f"scraping:debentures_caracteristicas:{run_id}"  
     await set_cache(request, job_id, "Coleta iniciada...")
 
     scraping = await scraper_caracteristicas()
-    if scraping["status"] == "erro":
-        await set_cache(request, job_id, "Erro na coleta.")
-        e = str(scraping["detalhe"])
-        resp = await insert_logs(conn, "Erro", start_time, None)
-        if resp.startswith("Erro"):
-            e += ' '
-            e += str(resp)
-        raise HTTPException(status_code=500, detail=e)
+    await check_status(scraping)
+    scraping_transformed = await transformation_caracteristicas(scraping["resp"])
+    await check_status(scraping_transformed)
     
     await set_cache(request, job_id, "Inserindo na Base.")
-    data = scraping["data"]
+    data = scraping_transformed["data"]
     try:
         result = await insert_debenture_caracteristicas(
             conn,

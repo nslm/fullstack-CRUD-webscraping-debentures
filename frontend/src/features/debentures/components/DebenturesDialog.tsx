@@ -31,18 +31,15 @@ const handleChange = (k: keyof Debenture) => (e: React.ChangeEvent<HTMLInputElem
   if (k === 'taxa') {
     const val = e.target.value
 
-    // Permite string vazia, números, e um ponto decimal
     if (/^\d*\.?\d*$/.test(val) || val === '') {
       setTaxaStr(val)
     }
   } else {
-    // Para os outros campos, guarda o valor direto (string)
     setForm(prev => ({ ...prev, [k]: e.target.value }))
   }
 }
 
   const handleSave = () => {
-    // basic validation
     if (!form.codigo || !form.emissor || !form.vencimento) {
       alert('Preencha os campos obrigatórios: código, emissor e vencimento.')
       return

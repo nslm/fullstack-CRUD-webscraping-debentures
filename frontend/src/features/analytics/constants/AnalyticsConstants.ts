@@ -2,8 +2,8 @@ export const API_BASE = (import.meta.env.VITE_API_BASE as string) || 'http://loc
 
 
 export function getColor(idx: number, total: number) {
-    const startHue = 140; // verde-azulado
-    const endHue = 200;   // azul mais puro
+    const startHue = 140; 
+    const endHue = 200;  
     const hue = startHue + ((endHue - startHue) * idx) / (total - 1);
     const saturation = 40; 
     const lightness = 70;

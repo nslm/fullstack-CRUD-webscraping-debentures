@@ -110,7 +110,6 @@ const AnalyticsPage: React.FC = () => {
             </Tabs>
           </Box>
 
-          {/* Tables */}
           {tabIndex === 0 && (
           <Grid item alignItems="left">
             <AnalyticsTableCaracteristicas
@@ -156,7 +155,6 @@ const AnalyticsPage: React.FC = () => {
           <Paper sx={{ p: 4, boxShadow: 3 }}>
             <Collapse in={openCollapseGraph1}>
 
-              {/* Charts */}
               <Grid item xs={12} mt={2}>
                 <AnalyticsGraphicTax
                     ativos={ativos}

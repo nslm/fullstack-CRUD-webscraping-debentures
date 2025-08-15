@@ -1,7 +1,6 @@
-from typing import Optional
 from psycopg import AsyncConnection
 from psycopg.rows import dict_row
-from typing import Union, List, Dict
+from typing import  List
 
 with open("app/querys/analitycs_debentures_balcao.sql") as f:
     queries = f.read().split("-- ")

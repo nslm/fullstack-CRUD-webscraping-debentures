@@ -8,11 +8,11 @@ import { DateFilterType } from "../types/AutomationsTypes";
 type Props = {
   dateFilter: DateFilterType;
   setDateFilter: React.Dispatch<React.SetStateAction<DateFilterType>>;
-  markedDates: string[]; // ISO strings (yyyy-MM-dd)
-  notWorkdayList: string[]; // ISO strings
-  lastWorkday: string; // ISO string
+  markedDates: string[];
+  notWorkdayList: string[]; 
+  lastWorkday: string; 
   loading: boolean;
-  parseDate: (iso: string) => Date; // convert ISO string -> Date
+  parseDate: (iso: string) => Date; 
 };
 
 export default function AutomationsDateFilter({
@@ -71,11 +71,19 @@ export default function AutomationsDateFilter({
       },
       disabled: (date) => { const lw = parseDate(lastWorkday); return isAfter(date, lw); },
       modifiersStyles: {
-        marked: { backgroundColor: "#1e8d22ff", color: "white" },
-        startSelected: { backgroundColor: '#0823bbff', color: 'white' },
-        pastWorkdays: { backgroundColor: "#e7e6e7ff", color: "black" },
-        notWorkdayPassed: { backgroundColor: "#f4f5f8ff", color: "black" },
-      },
+          pastWorkdays: ((date: Date) => {
+            if (format(date, 'yyyy-MM-dd') === dateFilter.startDate) return {};
+            return { backgroundColor: "#e7e6e7ff", color: "black" };
+          }) as any,
+
+          notWorkdayPassed: ((date: Date) => {
+            if (format(date, 'yyyy-MM-dd') === dateFilter.startDate) return {};
+            return { backgroundColor: "#f4f5f8ff", color: "black" };
+          }) as any,
+
+          startSelected: { backgroundColor: '#0823bbff', color: 'white' },
+          marked: { backgroundColor: "#1e8d22ff", color: "white" },
+        },
 
     };
   };

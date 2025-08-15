@@ -28,7 +28,7 @@ export function useAutomations() {
       return [state, setState];
     }
 
-  const [statuses, setStatuses] = usePersistedState<Record<string, string | undefined>>('statuses', {});
+  const [statuses, setStatuses] = useState<Record<string, string | undefined>>({});
   const [loading, setLoading] = usePersistedState<Record<string, boolean>>('loading', {});
   const [openLogs, setOpenLogs] = usePersistedState<Record<string, boolean>>('openLogs', {"balcao":true, "caracteristicas":true});
   const [page, setPage] = usePersistedState<Record<string, number>>('page', {});
@@ -99,7 +99,7 @@ export function useAutomations() {
     };
 
     fetchStatus();
-    intervalsRef.current[id] = window.setInterval(fetchStatus, 500);
+    intervalsRef.current[id] = window.setInterval(fetchStatus, 800);
   };
 
   const startAutomation = async (id: string) => {
