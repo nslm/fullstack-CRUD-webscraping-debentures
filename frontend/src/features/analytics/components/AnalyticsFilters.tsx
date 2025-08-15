@@ -65,7 +65,6 @@ export const AnalyticsFilters: React.FC<Props> = ({
   };
 
   const fetchCaracteristicasData = async (ativosSelecionados: string[]) => {
-    setLoading(true);
     try {      
       const ativosParam = ativosSelecionados.join(",");
       const [caracRes] = await Promise.all([
@@ -79,7 +78,6 @@ export const AnalyticsFilters: React.FC<Props> = ({
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
     }
   };
 

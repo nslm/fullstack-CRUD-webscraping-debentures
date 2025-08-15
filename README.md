@@ -33,7 +33,7 @@ Arquivo de configuração de ambiente: `.env.dev` (já incluído no projeto). Co
 ```
 /
 ├─ backend/                 # FastAPI + scripts de automação, tests, Dockerfile
-├─ frontend/                # React + Vite app (TSX), Dockerfile (build + nginx)
+├─ frontend/                # React + Vite app (TSX), Dockerfile (build)
 ├─ docker-compose.fullstack.yml
 ├─ docker-compose.backend.yml
 ├─ .env.dev
@@ -45,7 +45,7 @@ Arquivo de configuração de ambiente: `.env.dev` (já incluído no projeto). Co
 - `backend/app` — código FastAPI (routes, automations, DB access)
 - `frontend/src` — app React/Vite
 - `backend/tests` — testes pytest/pytest-asyncio para o backend
-- `frontend/Dockerfile` — Dockerfile multi-stage (build com Node/Yarn e serve com Nginx)
+- `frontend/Dockerfile` — Dockerfile multi-stage (build com Node/Yarn)
 - `backend/Dockerfile` — imagem Python + uvicorn
 
 ---
@@ -180,7 +180,7 @@ DELETE /api/debentures/{codigo}/
 
 - Backend: Python 3.10, FastAPI, uvicorn, httpx, psycopg[binary], redis.asyncio, python-dotenv, pandas, numpy
 - Frontend: React + Vite, TypeScript, Material UI, Recharts, axios
-- Infra: Docker, Docker Compose, Postgres, Redis, Nginx
+- Infra: Docker, Docker Compose, Postgres, Redis
 
 ---
 
