@@ -78,6 +78,7 @@ const AnalyticsPage: React.FC = () => {
           <Collapse in={openCollapseGraphPaper}>
             <AnalyticsFilters   
               ativos={ativos}           
+              setAtivos={setAtivos}           
               ativosAutoComplete={ativosAutoComplete}
               setAtivosAutoComplete={setAtivosAutoComplete}
               dataInicio={dataInicio}

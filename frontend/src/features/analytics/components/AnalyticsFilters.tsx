@@ -5,6 +5,7 @@ import { API_BASE } from "../constants/AnalyticsConstants";
 
 type Props = {
   ativos: string[];
+  setAtivos: React.Dispatch<React.SetStateAction<any[]>>;
   ativosAutoComplete: string[];
   setAtivosAutoComplete: (a: string[]) => void;
   dataInicio: string;
@@ -22,6 +23,7 @@ type Props = {
 
 export const AnalyticsFilters: React.FC<Props> = ({
   ativos,
+  setAtivos,
   ativosAutoComplete,
   setAtivosAutoComplete,
   dataInicio,
@@ -39,9 +41,10 @@ export const AnalyticsFilters: React.FC<Props> = ({
 }) => {
 
   const fetchAllData = async () => {
+    setAtivos(ativosAutoComplete)
     setLoading(true);
     try {
-      const ativosParam = ativos.join(",");
+      const ativosParam = ativosAutoComplete.join(",");
       const [caracRes, balcaoRes, evolRes] = await Promise.all([
         axios.get(`${API_BASE}/api/analytics/caracteristicas/`, {
           params: { codigos: ativosParam },

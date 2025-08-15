@@ -2,7 +2,6 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: backend
     ports:
       - "8000:8000"
@@ -35,7 +34,6 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.dev
     ports:
       - "5173:5173"
     volumes:
@@ -43,6 +41,8 @@ services:
       - /app/node_modules
     environment:
       - HOST=0.0.0.0
+    depends_on:
+      - backend
     stdin_open: true
     tty: true
 
