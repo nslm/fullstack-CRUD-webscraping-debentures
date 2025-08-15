@@ -38,7 +38,7 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend
+      - ./frontend:/app
     stdin_open: true
     tty: true
     depends_on:
