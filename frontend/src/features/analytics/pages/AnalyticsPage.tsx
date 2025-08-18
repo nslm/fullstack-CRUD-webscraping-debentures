@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { Box, Grid, Paper, Collapse, IconButton, Tabs, Tab } from "@mui/material";
+import { Box, Grid, Paper, Collapse, IconButton, Tabs, Tab, Backdrop, Typography } from "@mui/material";
 import { API_BASE } from "../constants/AnalyticsConstants";
 import { useAnalytics } from "../hooks/useAnalytics";
 import AnalyticsFilters from "../components/AnalyticsFilters";
@@ -61,11 +61,16 @@ const AnalyticsPage: React.FC = () => {
     fetchData();
   }, [setCodigosUnicos, setLoading]);
 
+  const vazio =
+    caracteristicas.length === 0 &&
+    balcao.length === 0 &&
+    evolucao.volume.length === 0 &&
+    evolucao.taxa.length === 0;
 
   return (
     <Grid container sx={{mt:4, mb:8, ml:0, mr:0}}>
       {openCollapse && openCollapseGraphPaper && (
-      <Paper sx={{ p: 2, boxShadow: 3, ml:2, width: "96.28%" }} >
+      <Paper sx={{ p: 2, boxShadow: 3, ml:2, zIndex: 3, width: "96.28%" }} >
           <AnalyticsFilters   
             ativos={ativos}           
             setAtivos={setAtivos}           
@@ -92,7 +97,6 @@ const AnalyticsPage: React.FC = () => {
           container
           xs={openCollapseGraphPaper? 4.4:11.47}
           direction="column"
-          sx={{ maxHeight: "30vh", minHeight: "30vh", maxWidth: "30vh", minWidth: "30vh" }}
         >
         <Collapse in={openCollapse}>
         <Paper sx={{ p: 2, boxShadow: 3 }}>
@@ -190,6 +194,27 @@ const AnalyticsPage: React.FC = () => {
       </Grid>
       )}
 
+      {vazio && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: "0vh",
+            left: "0vw",
+            width: "100vw",
+            height: "100vh",
+            bgcolor: "rgba(0, 0, 0, 0.32)", // cinza claro
+            display: "flex",
+            justifyContent: "center",
+            borderRadius:1,
+            alignItems: "center",
+            zIndex: 2,
+          }}
+        >
+          <Typography variant="h2" color="text.secondary">
+            Insira algum ativo
+          </Typography>
+        </Box>
+      )}
       </Grid>
     </Grid>
   );

@@ -39,10 +39,10 @@ export const AnalyticsTableCaracteristicas: React.FC<Props> = ({
       <TableContainer
         component={Paper}
         sx={{
-          maxHeight: openCollapseGraphPaper ? "58vh" : "58.6vh",
-          minHeight: openCollapseGraphPaper ? "58vh" : "58.6vh",
-          maxWidth: openCollapseGraphPaper ? "63vh" : "161vh",
-          minWidth: openCollapseGraphPaper ? "63vh" : "161vh",
+          maxHeight: openCollapseGraphPaper ? "58vh" : "66.8vh",
+          minHeight: openCollapseGraphPaper ? "58vh" : "66.8vh",
+          maxWidth: openCollapseGraphPaper ? "31vw" : "83.5vw",
+          minWidth: openCollapseGraphPaper ? "31vw" : "83.5vw",
         }}
       >
         <Table stickyHeader size={openCollapseGraphPaper ? "small" : "medium"}>

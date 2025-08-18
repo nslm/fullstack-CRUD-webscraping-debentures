@@ -17,7 +17,7 @@ type Props = {
   setLoading: (d: boolean) => void;
   setCaracteristicas: React.Dispatch<React.SetStateAction<any[]>>;
   setBalcao: React.Dispatch<React.SetStateAction<any[]>>;
-  setEvolucao: React.Dispatch<React.SetStateAction<any[]>>;
+  setEvolucao: React.Dispatch<React.SetStateAction<{ volume: any[]; taxa: any[] }>>;
   setPage: ({ caracteristicas, balcao }: { caracteristicas: number; balcao: number }) => void
 };
 
@@ -41,7 +41,17 @@ export const AnalyticsFilters: React.FC<Props> = ({
 }) => {
 
   const fetchAllData = async () => {
-    setAtivos(ativosAutoComplete)
+    setAtivos(ativosAutoComplete);
+    console.log(ativosAutoComplete);
+
+    if (ativosAutoComplete.length === 0) {
+      setCaracteristicas([]);
+      setBalcao([]);
+      setEvolucao({ volume: [], taxa: [] });
+      setPage({ caracteristicas: 0, balcao: 0 });
+      return;
+    }
+
     setLoading(true);
     try {
       const ativosParam = ativosAutoComplete.join(",");
@@ -66,6 +76,7 @@ export const AnalyticsFilters: React.FC<Props> = ({
       setLoading(false);
     }
   };
+
 
   const fetchCaracteristicasData = async (ativosSelecionados: string[]) => {
     try {      
@@ -99,8 +110,8 @@ export const AnalyticsFilters: React.FC<Props> = ({
             renderTags={(value: string[], getTagProps) =>
               value.map((option, index) => (
                 <Chip
-                  label={option}           // só o label
-                  {...getTagProps({ index })}  // getTagProps já inclui key
+                  label={option}
+                  {...getTagProps({ index })} 
                 />
               ))
             }

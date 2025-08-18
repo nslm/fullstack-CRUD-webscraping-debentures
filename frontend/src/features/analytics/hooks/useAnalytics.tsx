@@ -38,7 +38,7 @@ export function useAnalytics() {
   const [dataFim, setDataFim] = usePersistedState<string>("dataFim", "2025-08-08");
   const [caracteristicas, setCaracteristicas] = usePersistedState<any[]>("caracteristicas", []);
   const [balcao, setBalcao] = usePersistedState<any[]>("balcao", []);
-  const [evolucao, setEvolucao] = usePersistedState<any>("evolucao", { volume: [], taxa: [] });
+  const [evolucao, setEvolucao] = usePersistedState<{ volume: any[]; taxa: any[] }>("evolucao", { volume: [], taxa: [] });
   const [tabIndex, setTabIndex] = usePersistedState<number>("tabIndex", 0);
 
   const [page, setPage] = usePersistedState<Record<string, number>>("page", { caracteristicas: 0, balcao: 0 });

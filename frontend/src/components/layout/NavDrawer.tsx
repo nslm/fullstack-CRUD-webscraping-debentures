@@ -25,6 +25,7 @@ const NavDrawer: React.FC<Props> = ({ open, onNavigate, drawerWidth }) => {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
+        zIndex: (theme) => 3,
         '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' }
       }}
     >
