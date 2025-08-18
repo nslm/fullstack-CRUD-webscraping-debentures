@@ -3,7 +3,7 @@ import {
   Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, TablePagination, IconButton, TableSortLabel, Tooltip
 } from "@mui/material";
 import type { BalcaoRow } from "../types/AnalyticsTypes";
-import { formatValue } from "../constants/AnalyticsConstants";
+import { formatValue, formatNumber, formatDate } from "../constants/AnalyticsConstants";
 
 type Props = {
   balcao: BalcaoRow[];
@@ -33,10 +33,10 @@ export const AnalyticsTableBalcao: React.FC<Props> = ({
       <TableContainer
         component={Paper}
         sx={{
-          maxHeight: openCollapseGraphPaper ? "50vh" : "58.6vh",
-          minHeight: openCollapseGraphPaper ? "50vh" : "58.6vh",
-          maxWidth: openCollapseGraphPaper ? "66vh" : "170.9vh",
-          minWidth: openCollapseGraphPaper ? "66vh" : "170.9vh",
+          maxHeight: openCollapseGraphPaper ? "58vh" : "58.6vh",
+          minHeight: openCollapseGraphPaper ? "58vh" : "58.6vh",
+          maxWidth: openCollapseGraphPaper ? "63vh" : "168vh",
+          minWidth: openCollapseGraphPaper ? "63vh" : "168vh",
         }}
       >
         <Table stickyHeader size={openCollapseGraphPaper ? "small" : "medium"}>
@@ -45,15 +45,15 @@ export const AnalyticsTableBalcao: React.FC<Props> = ({
               {[
                 { label: "Data\u00A0\u00A0\u00A0", field: "data_do_negocio" },
                 { label: "Código", field: "codigo_do_ativo" },
-                { label: "Qtd.", field: "quantidade" },
-                { label: "Preço Uni.", field: "preco_unitario" },
+                { label: "Quantidade", field: "quantidade" },
+                { label: "Preço Unitario", field: "preco_unitario" },
                 { label: "Volume", field: "volume_financeiro" },
                 { label: "Taxa (%)", field: "taxa" },
               ].map((col) => (
                 <TableCell
                   key={col.label}
                   sx={{
-                    fontSize: openCollapseGraphPaper ? 12 : 16,
+                    fontSize: openCollapseGraphPaper ? 11 : 16,
                     fontWeight: "bold",
                   }}
                 >
@@ -84,22 +84,38 @@ export const AnalyticsTableBalcao: React.FC<Props> = ({
               .slice(balcaoPage * balcaoRows, balcaoPage * balcaoRows + balcaoRows)
               .map((row, idx) => (
                 <TableRow key={row.data_do_negocio + row.codigo_do_ativo + idx}>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 1.4 }}>
-                    {row.data_do_negocio}
+                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, py: 1.4915 }}>
+                    {formatDate(row.data_do_negocio)}
                   </TableCell>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 1.4 }}>
+                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, py: 1.4915 }}>
                     {row.codigo_do_ativo}
                   </TableCell>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 1.4 }}>
+                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, py: 1.4915 }}>
                     {row.quantidade}
                   </TableCell>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 1.4 }}>
-                    <Tooltip title={row.preco_unitario != null ? formatValue(row.preco_unitario / 10 ** 6): "-"}>
+                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, py: 1.4915 }}>
+                     <Tooltip title={row.preco_unitario != null ? formatValue(row.preco_unitario / 10 ** 6): "-"} 
+                      componentsProps={{
+                        tooltip: {
+                          sx: {
+                            fontSize: "0.8rem",  // aumenta o tamanho da fonte
+                            padding: "10px 15px", // aumenta o padding
+                          }
+                        }
+                      }}>
                       <span>{row.preco_unitario != null ? formatValue(row.preco_unitario / 10 ** 6): "-"}</span>
                     </Tooltip>
                   </TableCell>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 1.4 }}>
-                    <Tooltip title={row.volume_financeiro != null ? formatValue(row.volume_financeiro / 10 ** 2): "-"}>
+                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, py: 1.4915 }}>
+                    <Tooltip title={row.volume_financeiro != null ? formatValue(row.volume_financeiro / 10 ** 2): "-"}
+                        componentsProps={{
+                        tooltip: {
+                          sx: {
+                            fontSize: "0.8rem",  // aumenta o tamanho da fonte
+                            padding: "10px 15px", // aumenta o padding
+                          }
+                        }
+                      }}>
                       <span>{ row.volume_financeiro != null ? formatValue(row.volume_financeiro / 10 ** 2): "-"}</span>
                     </Tooltip>
                   </TableCell>

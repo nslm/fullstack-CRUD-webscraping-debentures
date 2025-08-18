@@ -4,6 +4,7 @@ import { DayPicker, DayPickerProps, Matcher } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { format, isAfter, parseISO } from "date-fns";
 import { DateFilterType } from "../types/AutomationsTypes";
+import { formattedDate } from "../constants/AutomationsConstants";
 
 type Props = {
   dateFilter: DateFilterType;
@@ -71,17 +72,9 @@ export default function AutomationsDateFilter({
       },
       disabled: (date) => { const lw = parseDate(lastWorkday); return isAfter(date, lw); },
       modifiersStyles: {
-          pastWorkdays: ((date: Date) => {
-            if (format(date, 'yyyy-MM-dd') === dateFilter.startDate) return {};
-            return { backgroundColor: "#e7e6e7ff", color: "black" };
-          }) as any,
-
-          notWorkdayPassed: ((date: Date) => {
-            if (format(date, 'yyyy-MM-dd') === dateFilter.startDate) return {};
-            return { backgroundColor: "#f4f5f8ff", color: "black" };
-          }) as any,
-
-          startSelected: { backgroundColor: '#0823bbff', color: 'white' },
+          pastWorkdays: { backgroundColor: "#e7e6e7ff", color: "black" },
+          notWorkdayPassed: { backgroundColor: "#f4f5f8ff", color: "black" },
+          //startSelected: { backgroundColor: '#f0f0f3ff', color: 'white' },
           marked: { backgroundColor: "#1e8d22ff", color: "white" },
         },
 
@@ -92,7 +85,7 @@ export default function AutomationsDateFilter({
     <Grid container spacing={2} justifyContent="space-between">
       <Grid item>
         <Grid sx={{ px: 2, mt: 2 }}>
-        <Typography fontWeight="bold">Data Início {dateFilter.startDate}</Typography>
+        <Typography fontWeight="bold">Data Início {formattedDate(dateFilter.startDate)}</Typography>
         </Grid>
         <Grid sx={{ px: 2, mt: 2 }}>
         <DayPicker {...buildDayPickerProps(dateFilter.startDate, "startDate")} />
@@ -100,7 +93,7 @@ export default function AutomationsDateFilter({
       </Grid>
       <Grid item>
         <Grid sx={{ px: 2, mt: 2 }}>
-        <Typography fontWeight="bold">Data Fim {dateFilter.finalDate}</Typography>
+        <Typography fontWeight="bold">Data Fim {formattedDate(dateFilter.finalDate)}</Typography>
         </Grid>
         <Grid sx={{ px: 2, mt: 2 }}>
         <DayPicker {...buildDayPickerProps(dateFilter.finalDate, "finalDate")} />
@@ -110,19 +103,19 @@ export default function AutomationsDateFilter({
       <Grid container spacing={1} sx={{ ml:4,  mr:4, mt:2 }}  justifyContent="space-between"  alignItems="center">
         <Grid item display="flex" alignItems="center" gap={1}>
           <Box sx={{ width: 20, height: 20, bgcolor: "#f4f5f8ff", border: "1px solid #ccc" }} />
-          <Typography variant="body2">Dias não úteis</Typography>
+          <Typography>Dias não úteis</Typography>
         </Grid>
         <Grid item display="flex" alignItems="center" gap={1}>
           <Box sx={{ width: 20, height: 20, bgcolor: "#e7e6e7ff", border: "1px solid #ccc" }} />
-          <Typography variant="body2">Dias úteis</Typography>
+          <Typography>Dias úteis</Typography>
         </Grid>
         <Grid item display="flex" alignItems="center" gap={1}>
           <Box sx={{ width: 20, height: 20, bgcolor: "#1e8d22ff", border: "1px solid #ccc" }} />
-          <Typography variant="body2">Datas coletadas</Typography>
+          <Typography>Datas coletadas</Typography>
         </Grid>
         <Grid item display="flex" alignItems="center" gap={1}>
           <Box sx={{ width: 20, height: 20, bgcolor: "#0823bbff", border: "1px solid #ccc" }} />
-          <Typography variant="body2">Data selecionada</Typography>
+          <Typography>Data selecionada</Typography>
         </Grid>
       </Grid>
     </Grid>

@@ -114,7 +114,7 @@ const DebenturesPage: React.FC = () => {
           />
         <Button onClick={() => fetchAll()} disabled={loading} startIcon={loading ? <CircularProgress size={20} /> : <RefreshIcon />}>Atualizar</Button>
         <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ height: '50px', backgroundColor: '#0723c0ff', fontWeight: 'bold', ml: 'auto'}}>
-          Adicionar
+          Adicionar Nova Debênture
         </Button>
       </Box>
 

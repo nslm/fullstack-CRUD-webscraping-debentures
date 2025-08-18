@@ -23,8 +23,11 @@ const DebenturesDialog: React.FC<Props> = ({ open, initial = null, onClose, onSa
   useEffect(() => {
     if (initial) {
       setForm(initial) 
-      setTaxaStr(String(initial.taxa / 1000))}
-    else setForm({ codigo: '', emissor: '', vencimento: '', indice: '', taxa: 0 })
+      setTaxaStr(String(initial.taxa / 10**4))}
+    else {
+      setForm({ codigo: '', emissor: '', vencimento: '', indice: '', taxa: 0 });
+      setTaxaStr('')
+    }
   }, [initial, open])
 
 const handleChange = (k: keyof Debenture) => (e: React.ChangeEvent<HTMLInputElement>) => {

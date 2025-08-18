@@ -63,38 +63,42 @@ const AnalyticsPage: React.FC = () => {
 
 
   return (
-    <Grid mt={4} mb={8} ml={0} mr={0} container spacing={8}>
+    <Grid container sx={{mt:4, mb:8, ml:0, mr:0}}>
+      {openCollapse && openCollapseGraphPaper && (
+      <Paper sx={{ p: 2, boxShadow: 3, ml:2, width: "96.28%" }} >
+          <AnalyticsFilters   
+            ativos={ativos}           
+            setAtivos={setAtivos}           
+            ativosAutoComplete={ativosAutoComplete}
+            setAtivosAutoComplete={setAtivosAutoComplete}
+            dataInicio={dataInicio}
+            setDataInicio={setDataInicio}
+            dataFim={dataFim}
+            setDataFim={setDataFim}
+            codigosUnicos={codigosUnicos}
+            loading={loading}   
+            setLoading={setLoading}
+            setCaracteristicas={setCaracteristicas}
+            setBalcao={setBalcao}
+            setEvolucao={setEvolucao}
+            setPage={setPage}            
+            />
+        </Paper>
+      )}
       <Grid container direction="row" ml={2} mt={4}>
         {openCollapse && (
         <Grid
           item
           container
-          xs={openCollapseGraphPaper? 4.5:12}
+          xs={openCollapseGraphPaper? 4.4:11.47}
           direction="column"
-          sx={{ maxHeight: "30vh", minHeight: "30vh", maxWidth: "50vh", minWidth: "50vh" }}
+          sx={{ maxHeight: "30vh", minHeight: "30vh", maxWidth: "30vh", minWidth: "30vh" }}
         >
         <Collapse in={openCollapse}>
         <Paper sx={{ p: 2, boxShadow: 3 }}>
           <Collapse in={openCollapseGraphPaper}>
-            <AnalyticsFilters   
-              ativos={ativos}           
-              setAtivos={setAtivos}           
-              ativosAutoComplete={ativosAutoComplete}
-              setAtivosAutoComplete={setAtivosAutoComplete}
-              dataInicio={dataInicio}
-              setDataInicio={setDataInicio}
-              dataFim={dataFim}
-              setDataFim={setDataFim}
-              codigosUnicos={codigosUnicos}
-              loading={loading}   
-              setLoading={setLoading}
-              setCaracteristicas={setCaracteristicas}
-              setBalcao={setBalcao}
-              setEvolucao={setEvolucao}
-              setPage={setPage}  
-              />
           </Collapse>
-          <Box position="relative" display="flex" justifyContent="space-between" alignItems="center" sx={{mr:0}}>
+          <Box position="relative" display="flex" justifyContent="space-between" alignItems="center">
             <IconButton
               size="small"
               onClick={() => {
@@ -151,7 +155,7 @@ const AnalyticsPage: React.FC = () => {
         )}
 
       {openCollapseGraphPaper && (
-      <Grid item xs={openCollapse ? 7.052:12} ml={openCollapse? 7.5:0} container direction="column">
+      <Grid item xs={openCollapse ? 6.83:11.45} ml={openCollapse? 7.5:0} container direction="column">
         <Collapse in={openCollapseGraphPaper}>
           <Paper sx={{ p: 4, boxShadow: 3 }}>
             <Collapse in={openCollapseGraph1}>

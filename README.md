@@ -63,7 +63,8 @@ docker compose -f docker-compose.fullstack.yml up --build
 
 Acesse:
 - Frontend (Vite dev server): [http://localhost:5173](http://localhost:5173)
-- Backend (FastAPI): [http://localhost:8000](http://localhost:8000) — Docs: [http://localhost:8000/docs](http://localhost:8000/docs) (FastAPI Swagger UI)
+- Backend (FastAPI): [http://localhost:8000](http://localhost:8000) 
+— Docs: [http://localhost:8000/docs](http://localhost:8000/docs) (FastAPI Swagger UI)
 
 Observações:
 - O `docker-compose.fullstack.yml` já mapeia portas e define `HOST=0.0.0.0` para o frontend dev server.

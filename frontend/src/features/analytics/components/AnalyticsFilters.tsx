@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { Grid, Autocomplete, TextField, Button, CircularProgress } from "@mui/material";
+import { Grid, Autocomplete, TextField, Button, CircularProgress, Chip } from "@mui/material";
 import { API_BASE } from "../constants/AnalyticsConstants";
 
 type Props = {
@@ -88,36 +88,29 @@ export const AnalyticsFilters: React.FC<Props> = ({
   return (
     <>            
       <Grid container direction="row" spacing={2}>
-        <Grid item xs={9.95} mb={1}>
+        <Grid item xs={6.5} mt={0}>
           <Autocomplete
             multiple
             options={codigosUnicos}
             value={ativosAutoComplete}
             onChange={(event, newValue) => {
-              setAtivosAutoComplete(newValue);
-              fetchCaracteristicasData(newValue);                    
+              setAtivosAutoComplete(newValue);                   
             }}
-            renderTags={() => null}
+            renderTags={(value: string[], getTagProps) =>
+              value.map((option, index) => (
+                <Chip
+                  label={option}           // só o label
+                  {...getTagProps({ index })}  // getTagProps já inclui key
+                />
+              ))
+            }
             renderInput={(params) => (
               <TextField {...params} variant="outlined" label="Ativos" placeholder="Selecione ativos" />
             )}
           />
         </Grid>
 
-        <Grid item xs={2} mt={0.3}>
-          <Button
-            variant="contained"
-            onClick={fetchAllData}
-            disabled={loading}
-            sx={{ height: "50px", backgroundColor: "#0723c0ff", fontWeight: "bold" }}
-          >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Filtrar"}
-          </Button>
-        </Grid>
-      </Grid>
-
-      <Grid container direction="row" spacing={2}>
-        <Grid item xs={6} mt={1} mb={2}>
+        <Grid item xs={2} mt={0}>
           <TextField
             type="date"
             label="Data Início"
@@ -128,7 +121,7 @@ export const AnalyticsFilters: React.FC<Props> = ({
           />
         </Grid>
 
-        <Grid item xs={6} mt={1} mb={2}>
+        <Grid item xs={2} mt={0}>
           <TextField
             type="date"
             label="Data Fim"
@@ -138,6 +131,18 @@ export const AnalyticsFilters: React.FC<Props> = ({
             onChange={(e) => setDataFim(e.target.value)}
             />
         </Grid>
+
+        <Grid item xs={1.5} mt={0.31}>
+          <Button
+            variant="contained"
+            onClick={fetchAllData}
+            disabled={loading}
+            sx={{ height: "50px", backgroundColor: "#0723c0ff", fontWeight: "bold", width:"100%" }}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Gerar Report"}
+          </Button>
+        </Grid>
+
       </Grid>
     </>
   );

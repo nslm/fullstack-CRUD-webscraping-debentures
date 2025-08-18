@@ -4,6 +4,7 @@ import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import {
   Chart as ChartJS,
+  ChartOptions,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -14,7 +15,7 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { formatValue, formatNumberRS } from "../constants/AnalyticsConstants";
+import { formatValue, formatNumberRS, safeValue, formatDate } from "../constants/AnalyticsConstants";
 
 ChartJS.register(
   CategoryScale,
@@ -27,10 +28,6 @@ ChartJS.register(
   ChartDataLabels
 );
 
-function safeValue(value: number | null | undefined) {
-  if (value === null || value === undefined) return 0;
-  return value;
-}
 
 type Props = {
   ativos: string[];
@@ -49,13 +46,17 @@ export const AnalyticsGraphicVolume: React.FC<Props> = ({
   openCollapseGraph1,
   setOpenCollapseGraph1,
 }) => {
-  // Paleta de 9 cores
-const palette = [
-  "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
-  "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22"
-];
 
-  const labels = evolucao.volume.map((d: any) => d.data_do_negocio);
+  const palette = [
+    "rgba(0, 64, 96, 0.84)",    // azul escuro fosco
+    "rgba(51, 102, 102, 0.84)", // verde-azulado fosco
+    "rgba(102, 153, 102, 0.86)",// verde médio fosco
+    "rgba(153, 204, 153, 0.81)",// verde suave pastel
+    "rgba(192, 192, 192, 0.83)",// cinza neutro
+    "rgba(255, 243, 204, 0.81)" // amarelo muito suave
+  ];
+
+  const labels = evolucao.volume.map((d: any) => formatDate(d.data_do_negocio));
 
   const datasets = ativos.map((codigo, idx) => ({
     type: "line" as const,
@@ -66,7 +67,7 @@ const palette = [
     pointRadius: 0,
     yAxisID: "y",
     borderColor: palette[idx % palette.length],
-    backgroundColor: palette[idx % palette.length] + "33", // 20% opacity
+    backgroundColor: palette[idx % palette.length], 
     borderWidth: 1.6,
     borderSkipped: false,
   }));
@@ -76,9 +77,14 @@ const palette = [
   );
   const maxValor = Math.max(...todosValores) * 1.2;
 
-  const options = {
+  const options: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false as const,
+    layout: {
+    padding: {
+      left: 0,
+      right: 0,
+    }},
     interaction: {
       mode: "index" as const,
       intersect: false,
@@ -91,7 +97,7 @@ const palette = [
         },
       },
       datalabels: {
-        display: true,
+        display: false,
         color: "#000",
         anchor: "end" as const,
         align: "top" as const,
@@ -103,17 +109,30 @@ const palette = [
     },
     scales: {
       y: {
+        title: {
+        display: true,
+        text: 'Volume Financeiro',
+        font: {
+          size: 14,
+          weight: 'bold'
+        }},
         beginAtZero: false,
         max: maxValor,
         position: "right" as const,
         ticks: {
+          padding: 10, 
           callback: (value: any) => formatValue(Number(value)),
         },
       },
       x: {
+        grid: {
+          drawOnChartArea: false,
+          drawTicks: true,  
+          },
         ticks: {
           autoSkip: true,
           maxRotation: 0,
+          padding: 0,
         },
       },
     },
@@ -149,7 +168,7 @@ const palette = [
           Volume Financeiro Médio Diário
         </Typography>
       </Box>
-      <Box width="98%" height={openCollapseGraph1 ? "31.5vh" : "64.5vh"}>
+      <Box width="98%" height={openCollapseGraph1 ? "28vh" : "60vh"}>
         <Chart type="line" data={{ labels, datasets }} options={options} />
       </Box>
     </>

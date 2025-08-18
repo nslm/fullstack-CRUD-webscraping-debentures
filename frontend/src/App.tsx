@@ -9,7 +9,7 @@ import { Box, Toolbar } from '@mui/material'
 
 
 
-const drawerWidth = 240
+const drawerWidth = 220
 
 export default function App() {
 
@@ -19,7 +19,6 @@ export default function App() {
   const handleToggle = () => setOpen((s) => !s)
   const handleNavigate = (path: string) => {
     navigate(path);
-    setOpen(false)
   }
 
   return (

@@ -33,7 +33,7 @@ export default function AutomationsPage() {
                 <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", mb: 4}}>
                   <Typography variant="h6">{label}</Typography>
                   <Button variant="contained" onClick={() => startAutomation(id)} disabled={!!loading[id]} sx={{height: '50px', backgroundColor: '#0723c0ff', fontWeight: 'bold'}}>
-                    {loading[id] ? <CircularProgress size={24} color="inherit" /> : "Start"}
+                    {loading[id] ? <CircularProgress size={24} color="inherit" /> : "Atualizar Dados"}
                   </Button>                  
                 </Box>
 

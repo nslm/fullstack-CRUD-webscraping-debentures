@@ -1,6 +1,7 @@
 import React from "react";
 import { Table, TableHead, TableBody, TableRow, TableCell, TablePagination, Box } from "@mui/material";
 import { LogEntry } from "../types/AutomationsTypes";
+import { formattedDate } from "../constants/AutomationsConstants";
 
 type Props = {
   logs: LogEntry[];
@@ -28,7 +29,17 @@ export default function AutomationsLogsTable({ logs, columns, page, rowsPerPage,
         <TableBody>
           {paginatedLogs.map((log, index) => (
             <TableRow key={index}>
-              {columns.map(col => <TableCell key={col.field}>{log[col.field] ?? "-"}</TableCell>)}
+              {columns.map(col => {
+                const value = log[col.field];
+
+                // aplica formatação apenas se for string contendo data/hora
+                const formattedValue =
+                  typeof value === "string" && /\d{4}-\d{2}-\d{2}/.test(value)
+                    ? formattedDate(value)
+                    : value ?? "-";
+
+                return <TableCell key={col.field}>{formattedValue}</TableCell>;
+              })}
             </TableRow>
           ))}
           {emptyRows > 0 && Array.from({ length: emptyRows }).map((_, i) => (

@@ -1,20 +1,17 @@
 export const API_BASE = (import.meta.env.VITE_API_BASE as string) || 'http://localhost:8000';
 
 
-export function getColor(idx: number, total: number) {
-    const startHue = 140; 
-    const endHue = 200;  
-    const hue = startHue + ((endHue - startHue) * idx) / (total - 1);
-    const saturation = 40; 
-    const lightness = 70;
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  }
+export function formatDate(dateString?: string) {
+if (!dateString) return "-"; 
+  const date = new Date(dateString);
+  return date.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+}
 
 
 export function formatValue(value: number) {
     if (value >= 1_000_000) return parseFloat((value / 1_000_000).toFixed(0)) + "MI";
     if (value >= 1_000) return parseFloat((value / 1_000).toFixed(0)) + "K";
-    return value.toString();
+    return value.toFixed(2); // arredonda para 2 casas decimais
     }
 
 
@@ -26,11 +23,17 @@ export function formatValueRS(value: number) {
 
 
 export function formatNumber(value: number) {
-    return value.toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    });
-    }
+  let formatted = value.toLocaleString("pt-BR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+
+  if (formatted.endsWith(",0")) {
+    formatted = formatted.replace(/,0+$/, "");
+  }
+
+  return formatted;
+}
 
 
 export function formatNumberRS(value: number) {
@@ -40,10 +43,16 @@ export function formatNumberRS(value: number) {
     });
     }
 
+export function formatPercent(value: number | null | undefined, decimal: number = 2) {
+  if (value === null || value === undefined) return "-";
+  return `${value.toLocaleString("pt-BR", {
+    minimumFractionDigits: decimal,
+    maximumFractionDigits: decimal,
+  })}%`;
+}
 
-export function formatPercent(value: number, decimal: number = 2) {
-    return `${value.toLocaleString("pt-BR", {
-        minimumFractionDigits: decimal,
-        maximumFractionDigits: decimal,
-    })}%`;
-    }
+export function safeValue(value: number | null | undefined) {
+  if (value === null || value === undefined) return 0;
+  return value;
+}
+

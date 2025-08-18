@@ -8,7 +8,7 @@ export default function useDebentures() {
       key = "debenture_" + key;
       const [state, setState] = useState<T>(() => {
         try {
-          const saved = localStorage.getItem(key);
+          const saved = sessionStorage.getItem(key);
           return saved ? JSON.parse(saved) : defaultValue;
         } catch {
           return defaultValue;
@@ -17,7 +17,7 @@ export default function useDebentures() {
   
       useEffect(() => {
         try {
-          localStorage.setItem(key, JSON.stringify(state));
+          sessionStorage.setItem(key, JSON.stringify(state));
         } catch (err) {
           console.warn(`Erro salvando ${key} no localStorage`, err);
         }

@@ -7,7 +7,7 @@ export function usePersistedState<T>(key: string, defaultValue: T): [T, React.Di
   const storageKey = "analytics_" + key;
   const [state, setState] = useState<T>(() => {
     try {
-      const saved = localStorage.getItem(storageKey);
+      const saved = sessionStorage.getItem(storageKey);
       return saved ? JSON.parse(saved) : defaultValue;
     } catch {
       return defaultValue;
@@ -16,7 +16,7 @@ export function usePersistedState<T>(key: string, defaultValue: T): [T, React.Di
 
   useEffect(() => {
     try {
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      sessionStorage.setItem(storageKey, JSON.stringify(state));
     } catch {
     }
   }, [storageKey, state]);
@@ -26,12 +26,12 @@ export function usePersistedState<T>(key: string, defaultValue: T): [T, React.Di
 
 export function useAnalytics() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [openCollapse, setOpenCollapse] = useState<boolean>(true);
-  const [openCollapseTables, setOpenCollapseTables] = useState<boolean>(true);
-  const [openCollapseGraphPaper, setOpenCollapseGraphPaper] = useState<boolean>(true);
-  const [openCollapseGraph1, setOpenCollapseGraph1] = useState<boolean>(true);
-  const [openCollapseGraph2, setOpenCollapseGraph2] = useState<boolean>(true);
-  const [ativos, setAtivos] = usePersistedState<string[]>("ativos", ["PETR17", "RIS424", "SBSPE9"]);
+  const [openCollapse, setOpenCollapse] = usePersistedState<boolean>("openCollapse", true);
+  const [openCollapseTables, setOpenCollapseTables] = usePersistedState<boolean>("openCollapseTables", true);
+  const [openCollapseGraphPaper, setOpenCollapseGraphPaper] = usePersistedState<boolean>("openCollapseGraphPaper", true);
+  const [openCollapseGraph1, setOpenCollapseGraph1] = usePersistedState<boolean>("openCollapseGraph1", true);
+  const [openCollapseGraph2, setOpenCollapseGraph2] = usePersistedState<boolean>("openCollapseGraph2", true);
+  const [ativos, setAtivos] = usePersistedState<string[]>("ativos", []);
   const [codigosUnicos, setCodigosUnicos] = usePersistedState<string[]>("codigosUnicos", []);
   const [ativosAutoComplete, setAtivosAutoComplete] = usePersistedState<string[]>("ativosAutoComplete", []);
   const [dataInicio, setDataInicio] = usePersistedState<string>("dataInicio", "2025-07-28");
@@ -41,10 +41,10 @@ export function useAnalytics() {
   const [evolucao, setEvolucao] = usePersistedState<any>("evolucao", { volume: [], taxa: [] });
   const [tabIndex, setTabIndex] = usePersistedState<number>("tabIndex", 0);
 
-  const [page, setPage] = useState<Record<string, number>>({ caracteristicas: 0, balcao: 0 });
-  const [rowsPerPage] = useState<Record<string, number>>({ caracteristicas: 8, balcao: 10 });
-  const [orderBy, setOrderBy] = useState<string | null>(null);
-  const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [page, setPage] = usePersistedState<Record<string, number>>("page", { caracteristicas: 0, balcao: 0 });
+  const [rowsPerPage] = usePersistedState<Record<string, number>>("rowsPerPage", { caracteristicas: 10, balcao: 12 });
+  const [order, setOrder] = usePersistedState<"asc" | "desc">("order", "asc");
+  const [orderBy, setOrderBy] = usePersistedState<string | null>("orderBy", null);
 
   const handleChange = (_: React.SyntheticEvent, newIndex: number) => {
     setTabIndex(newIndex);

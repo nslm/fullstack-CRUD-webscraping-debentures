@@ -4,6 +4,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { Caracteristica } from "../types/AnalyticsTypes";
+import { formatDate } from "../constants/AnalyticsConstants";
 
 type Props = {
   caracteristicas: Caracteristica[];
@@ -38,10 +39,10 @@ export const AnalyticsTableCaracteristicas: React.FC<Props> = ({
       <TableContainer
         component={Paper}
         sx={{
-          maxHeight: openCollapseGraphPaper ? "50vh" : "58.6vh",
-          minHeight: openCollapseGraphPaper ? "50vh" : "58.6vh",
-          maxWidth: openCollapseGraphPaper ? "66vh" : "170.9vh",
-          minWidth: openCollapseGraphPaper ? "66vh" : "170.9vh",
+          maxHeight: openCollapseGraphPaper ? "58vh" : "58.6vh",
+          minHeight: openCollapseGraphPaper ? "58vh" : "58.6vh",
+          maxWidth: openCollapseGraphPaper ? "63vh" : "161vh",
+          minWidth: openCollapseGraphPaper ? "63vh" : "161vh",
         }}
       >
         <Table stickyHeader size={openCollapseGraphPaper ? "small" : "medium"}>
@@ -53,11 +54,10 @@ export const AnalyticsTableCaracteristicas: React.FC<Props> = ({
                 { label: "Vencimento", field: "vencimento" },
                 { label: "Índice", field: "indice" },
                 { label: "Taxa (%)", field: "taxa" },
-                { label: "Ação", field: "acao" },
               ].map((col) => (
                 <TableCell
                   key={col.field}
-                  sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, fontWeight: "bold" }}
+                  sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, fontWeight: "bold" }}
                 >
                   {col.field !== "acao" ? (
                     <TableSortLabel
@@ -91,11 +91,19 @@ export const AnalyticsTableCaracteristicas: React.FC<Props> = ({
               .slice(caracPage * caracRows, caracPage * caracRows + caracRows)
               .map((row) => (
                 <TableRow key={row.codigo} sx={{ height: 48 }}>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 0.5 }}>
+                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, py: 1.839 }}>
                     {row.codigo}
                   </TableCell>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 0.5 }}>
-                    <Tooltip title={row.emissor} arrow>
+                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, py: 1.839 }}>
+                    <Tooltip title={row.emissor} arrow
+                        componentsProps={{
+                        tooltip: {
+                          sx: {
+                            fontSize: "0.8rem",  // aumenta o tamanho da fonte
+                            padding: "10px 15px", // aumenta o padding
+                          }
+                        }
+                      }}>
                       <span
                         style={{
                           display: "inline-block",
@@ -109,33 +117,14 @@ export const AnalyticsTableCaracteristicas: React.FC<Props> = ({
                       </span>
                     </Tooltip>
                   </TableCell>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 0.5 }}>
-                    {row.vencimento}
+                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, py: 1.839 }}>
+                    {formatDate(row.vencimento)}
                   </TableCell>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 0.5 }}>
+                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, py: 1.839 }}>
                     {row.indice}
                   </TableCell>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 0.5 }}>
+                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 11 : 16, py: 1.839 }}>
                     {row.taxa != null ? (row.taxa / 10 ** 4).toFixed(2) : "-"}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: openCollapseGraphPaper ? 12 : 16, py: 0.5 }}>
-                    <IconButton
-                      onClick={() => {
-                        setAtivosAutoComplete((prev) => prev.filter((c) => c !== row.codigo));
-                        setCaracteristicas((prev) =>
-                          prev.filter((item: any) => item.codigo !== row.codigo)
-                        );
-                      }}
-                      aria-label="excluir"
-                      sx={{
-                        padding: 0,
-                        width: 24,
-                        height: 24
-                      }}
-                    >
-                      <DeleteIcon sx={{ fontSize: 16 }} />
-                    </IconButton>
-
                   </TableCell>
                 </TableRow>
               ))}

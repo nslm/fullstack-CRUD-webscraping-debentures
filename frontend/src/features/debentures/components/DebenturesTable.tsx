@@ -1,8 +1,9 @@
-import React from 'react'
-import { Table, TableHead, TableRow, TableCell, TableBody, IconButton, Paper, TableContainer, TableSortLabel } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { Debenture } from '../types/DebenturesTypes'
+import React from 'react';
+import { Table, TableHead, TableRow, TableCell, TableBody, IconButton, Paper, TableContainer, TableSortLabel } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Debenture } from '../types/DebenturesTypes';
+import { formatDate } from "../constants/DebenturesConstants";
 
 
 
@@ -54,7 +55,7 @@ const DebenturesTable: React.FC<Props> = ({
             <TableRow key={row.codigo}>
               <TableCell sx={{ py: 0.9, fontSize: 15 }}>{row.codigo}</TableCell>
               <TableCell sx={{ py: 0.9, fontSize: 15 }}>{row.emissor}</TableCell>
-              <TableCell sx={{ py: 0.9, fontSize: 15 }}>{row.vencimento}</TableCell>
+              <TableCell sx={{ py: 0.9, fontSize: 15 }}>{formatDate(row.vencimento)}</TableCell>
               <TableCell sx={{ py: 0.9, fontSize: 15 }}>{row.indice}</TableCell>
               <TableCell sx={{ py: 0.9, fontSize: 15 }}>{(row.taxa / 10**4).toFixed(2)}</TableCell>
               <TableCell sx={{ py: 0.9, fontSize: 15 }} align="right">

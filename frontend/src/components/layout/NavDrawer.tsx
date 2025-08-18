@@ -12,9 +12,9 @@ const NavDrawer: React.FC<Props> = ({ open, onNavigate, drawerWidth }) => {
 
   const location = useLocation()
   const items = [
-    { text: 'Automações', icon: <AutomationIcon />, path: '/automacoes' },
-    { text: 'Debentures', icon: <MonetizationOnIcon />, path: '/debentures' },
-    { text: 'Analytics', icon: <AnalyticsIcon />, path: '/analytics' }
+    { text: 'Geração de Rotinas de Coleta', icon: <AutomationIcon />, path: '/automacoes' },
+    { text: 'Características das Debêntures', icon: <MonetizationOnIcon />, path: '/debentures' },
+    { text: 'Dashboard Analítico', icon: <AnalyticsIcon />, path: '/analytics' }
   ]
 
   return (
@@ -38,7 +38,7 @@ const NavDrawer: React.FC<Props> = ({ open, onNavigate, drawerWidth }) => {
             onClick={() => {
               onNavigate(item.path);
             }}
-            sx={{px:4, mt:0}}
+            sx={{px:1.5, mt:0}}
           >
             <ListItemIcon sx={{mt:2, mb:2}}>{item.icon}</ListItemIcon>
             <ListItemText sx={{mt:2, mb:2}} primary={item.text} primaryTypographyProps={{ fontWeight: 'bold' }}/>
