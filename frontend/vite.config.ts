@@ -8,6 +8,7 @@ loadDotenv({ path: path.resolve(__dirname, '..', '.env.dev') })
 
 
 export default defineConfig({
+  base: './',
   plugins: [react()],
   define: {
     'process.env': process.env

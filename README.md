@@ -34,7 +34,7 @@ Arquivo de configuração de ambiente: `.env.dev` (já incluído no projeto).
 ```
 /
 ├─ backend/                 # FastAPI + scripts de automação, tests, Dockerfile
-├─ frontend/                # React + Vite app (TSX), Dockerfile (build)
+├─ frontend/                # React + Vite app (TSX), Dockerfile (build) + Vite Build
 ├─ docker-compose.fullstack.yml
 ├─ docker-compose.backend.yml
 ├─ .env.dev
@@ -77,6 +77,10 @@ Observações:
 docker compose -f docker-compose.backend.yml up --build
 ```
 
+## Rodando frontend isolado usando uma dist pré-buildada
+```bash
+python -m http.server -d dist 5173
+```
 
 ## Endpoints principais (visão rápida)
 
