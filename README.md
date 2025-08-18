@@ -78,8 +78,14 @@ docker compose -f docker-compose.backend.yml up --build
 ```
 
 ## Rodando frontend isolado usando uma dist pré-buildada
+Para rodar em modo de desenvolvimento (instala dependências e inicia o servidor):
 ```bash
-python -m http.server -d dist 5173
+npm install
+npm run dev
+```
+Para apenas visualizar a build já gerada (economiza tempo de instalação e build):
+```bash
+npm run preview
 ```
 
 ## Endpoints principais (visão rápida)
